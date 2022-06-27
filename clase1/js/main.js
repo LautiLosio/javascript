@@ -82,3 +82,5 @@ console.log(edadCincos);
 let alturaDeseada = alturaUsuario + 0.1;
 
 alert ('Tu nombre es ' + nombreUsuario + ', tu edad es ' + edadUsuario + ' y tu altura es ' + alturaUsuario + '.\n' + 'Tu edad dentro de cinco años va a ser ' + edadCincos + '.\n' + 'Tu altura deseada es ' + alturaDeseada);
+
+
