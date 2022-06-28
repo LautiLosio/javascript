@@ -7,6 +7,20 @@
   color: whitesmoke;
 }
 
+@media screen and (min-width: 900px) {
+  body {
+    width: 80%;
+    margin: auto;
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  body {
+    width: 65%;
+    margin: auto;
+  }
+}
+
 body {
     background-color: #1f2023;
     margin-bottom: 200px;
@@ -159,7 +173,6 @@ table td {
   width: auto;
 }
 
-
 .title {
     display: flex;
     justify-content: center;
@@ -198,4 +211,5 @@ table td {
 
   .gradient h1,.gradient h2,.gradient h3,.gradient p {
     color: #1f2023;
+    text-align: center;
   }
