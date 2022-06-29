@@ -46,6 +46,8 @@
         </div>
     </section>
 
+    <div class="pagebreak"></div>
+
     <section class="parrafo">
         <h2>CONDICIONALES: DEFINICIÓN</h2>
         <hr>
@@ -95,6 +97,8 @@
         </pre>
     </section>
 
+    <div class="pagebreak"></div>
+    
     <section class="parrafo">
         <h2>COMPARACIÓN</h2>
         <hr>
@@ -127,6 +131,8 @@
         </pre>
     </section>
 
+    <div class="pagebreak"></div>
+
     <section class="parrafo">
         <h2>IF ... ELSE</h2>
         <hr>
@@ -151,6 +157,8 @@
             </code>
         </pre>
     </section>
+
+    <div class="pagebreak"></div>
 
     <section class="parrafo">
         <h2>CONDICIONES ANIDADAS IF...ELSE IF</h2>
@@ -181,6 +189,8 @@
         </pre>
     </section>
 
+    <div class="pagebreak"></div>
+
     <div class="title gradient">
         <h2>Variables Boolean</h2>
     </div>
@@ -207,88 +217,90 @@
         </pre>
     </section>
 
-        <div class="title gradient">
-            <h2>Operadores Lógicos</h2>
+    <div class="pagebreak"></div>
+
+    <div class="title gradient">
+        <h2>Operadores Lógicos</h2>
+    </div>
+
+    <section class="parrafo">
+        <h2>OPERADORES EN JS</h2>
+        <hr>
+        
+        <div class="title-paragraph">
+            <p>
+                En JavaScript, disponemos de los <i>operadores lógicos</i> habituales en lenguajes de programación como son: <b>es igual, es distinto, menor, menor o igual, mayor, mayor o igual, and (y), or (o) y not (no)</b>. La sintaxis se basa en símbolos, como veremos a continuación.
+            </p>
+        </div>
+        <div class="title-paragraph">
+            <em>Cabe destacar que hay que prestar atención a no confundir &lsquo;==&rsquo; con &lsquo;=&rsquo; porque implican distintas cosas.</em>
         </div>
 
-        <section class="parrafo">
-            <h2>OPERADORES EN JS</h2>
-            <hr>
-            
-            <div class="title-paragraph">
-                <p>
-                    En JavaScript, disponemos de los <i>operadores lógicos</i> habituales en lenguajes de programación como son: <b>es igual, es distinto, menor, menor o igual, mayor, mayor o igual, and (y), or (o) y not (no)</b>. La sintaxis se basa en símbolos, como veremos a continuación.
-                </p>
-            </div>
-            <div class="title-paragraph">
-                <em>Cabe destacar que hay que prestar atención a no confundir &lsquo;==&rsquo; con &lsquo;=&rsquo; porque implican distintas cosas.</em>
-            </div>
+        <table>
+            <tr>
+                <th>Operador lógico</th>
+                <th>Descripción</th>
+                <th>Ejemplo</th>
+            </tr>
+            <tr>
+                <td>==</td>
+                <td>Compara si dos valores son iguales</td>
+                <td>
+                    <code>a&nbsp;==&nbsp;b</code>
+                </td>
+            </tr>
+            <tr>
+                <td>===</td>
+                <td>Compara si dos valores son iguales y también si son del mismo tipo</td>
+                <td>
+                    <code>a&nbsp;===&nbsp;b</code>
+                </td>
+            </tr>
+            <tr>
+                <td>!=</td>
+                <td>Compara si dos valores son distintos</td>
+                <td>
+                    <code>a&nbsp;!=&nbsp;b</code>
+                </td>
+            </tr>
+            <tr>
+                <td>!==</td>
+                <td>Compara si dos valores son distintos y también si son del mismo tipo</td>
+                <td>
+                    <code>a&nbsp;!==&nbsp;b</code>
+                </td>
+            </tr>
+            <tr>
+                <td>&lt;, &lt;=, &gt;, &gt;=</td>
+                <td>Compara si un valor es menor, menor o igual, mayor o igual que otro</td>
+                <td>
+                    <code>a&nbsp;&lt;=&nbsp;b</code>
+                </td>
+            </tr>
+            <tr>
+                <td>&amp;&amp;</td>
+                <td>Operador and (y)</td>
+                <td>
+                    <code>a&nbsp;&amp;&amp;&nbsp;b</code>
+                </td>
+            </tr>
+            <tr>
+                <td>||</td>
+                <td>Operador or (o)</td>
+                <td>
+                    <code>a&nbsp;||&nbsp;b</code>
+                </td>
+            </tr>
+            <tr>
+                <td>!</td>
+                <td>Operador not (no)</td>
+                <td>
+                    <code>!a</code>
+                </td>
+            </tr>
+        </table>
 
-            <table>
-                <tr>
-                    <th>Operador lógico</th>
-                    <th>Descripción</th>
-                    <th>Ejemplo</th>
-                </tr>
-                <tr>
-                    <td>==</td>
-                    <td>Compara si dos valores son iguales</td>
-                    <td>
-                        <code>a&nbsp;==&nbsp;b</code>
-                    </td>
-                </tr>
-                <tr>
-                    <td>===</td>
-                    <td>Compara si dos valores son iguales y también si son del mismo tipo</td>
-                    <td>
-                        <code>a&nbsp;===&nbsp;b</code>
-                    </td>
-                </tr>
-                <tr>
-                    <td>!=</td>
-                    <td>Compara si dos valores son distintos</td>
-                    <td>
-                        <code>a&nbsp;!=&nbsp;b</code>
-                    </td>
-                </tr>
-                <tr>
-                    <td>!==</td>
-                    <td>Compara si dos valores son distintos y también si son del mismo tipo</td>
-                    <td>
-                        <code>a&nbsp;!==&nbsp;b</code>
-                    </td>
-                </tr>
-                <tr>
-                    <td>&lt;, &lt;=, &gt;, &gt;=</td>
-                    <td>Compara si un valor es menor, menor o igual, mayor o igual que otro</td>
-                    <td>
-                        <code>a&nbsp;&lt;=&nbsp;b</code>
-                    </td>
-                </tr>
-                <tr>
-                    <td>&amp;&amp;</td>
-                    <td>Operador and (y)</td>
-                    <td>
-                        <code>a&nbsp;&amp;&amp;&nbsp;b</code>
-                    </td>
-                </tr>
-                <tr>
-                    <td>||</td>
-                    <td>Operador or (o)</td>
-                    <td>
-                        <code>a&nbsp;||&nbsp;b</code>
-                    </td>
-                </tr>
-                <tr>
-                    <td>!</td>
-                    <td>Operador not (no)</td>
-                    <td>
-                        <code>!a</code>
-                    </td>
-                </tr>
-            </table>
-
-        </section>
+    </section>
 
 
     <script src="./js/clase2.js"></script>

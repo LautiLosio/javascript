@@ -21,6 +21,23 @@
   }
 }
 
+@media print {
+  * {
+    color: black;
+    box-shadow: none !important;
+    overflow: visible !important;
+  };
+
+  /* body {
+    width: 100%;
+    margin: auto;
+  } */
+
+  .pagebreak {
+    page-break-after: always;
+  }
+}
+
 body {
     background-color: #1f2023;
     margin-bottom: 200px;
