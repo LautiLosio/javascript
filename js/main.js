@@ -1,4 +1,5 @@
 alert("Bienvenido a Universify Web");
+
 class Producto {
     constructor(id, nombre, precio, cantidad, carrera, condicion) {
         this.id = id;
@@ -23,6 +24,9 @@ class Producto {
 }
 
 // Productos
+/**
+ * @type {Producto[]}
+ */
 const productos = [
     new Producto(1, "Tablero", 38150, 5, "Arquitectura", "Nuevo"),
     new Producto(2, "Craneo", 45134, 5, "Odontologia", "Nuevo"),
@@ -38,6 +42,11 @@ const productos = [
     new Producto(12, "Matematica", 14980, 1, "Economia", "Usado")
 ]
 
+/**
+ * Realiza la compra para cada producto del carrito
+ * @param {[{id:number,cantidad:number,producto:Producto}]} carrito - array de objetos que contienen el id, cantidad y producto que se quiere comprar
+ * @returns {number} el total de la compra, -1 si no se pudo comprar algun producto
+ */
 function comprar(carrito) {
     let total = 0;
     for (const item of carrito) {
@@ -53,6 +62,11 @@ function comprar(carrito) {
     return total;
 }
 
+/**
+ * Recibe un array con el id y cantidad del producto que se quiere comprar y lo agrega al carrito dependiendo de varias condiciones
+ * @param {number[]} idCantidad array con el id y cantidad del producto que se quiere comprar
+ * @returns {boolean} true si fallo y no se agrego al carrito, false si se agrego al carrito
+ */
 function cargarCarrito(idCantidad) {
 
     let id = idCantidad[0];
@@ -64,46 +78,47 @@ function cargarCarrito(idCantidad) {
         producto: productos.find(producto => producto.id == idCantidad[0]),
     }
 
-    if (carrito.some(item => item.id === seleccion.id)) {
-        carrito.find(item => item.id === seleccion.id).cantidad += seleccion.cantidad;
-    } else {
-        carrito.push(seleccion);
+    if (cantidad > seleccion.producto.cantidad) {
+        alert(`El producto ${seleccion.producto.nombre} no tiene suficientes unidades`);
+        return true;
     }
 
-    return seleccion;
+    if (carrito.some(item => item.id === id)) {
+        let newCant = carrito.find(item => item.id === id).cantidad + cantidad;
+        if (productos.find(item => item.id === id).cantidad >= newCant) {
+            carrito.find(item => item.id === id).cantidad = newCant;
+        }
+        else {
+            alert(`No puedes cargar mas de ${seleccion.producto.cantidad} unidades de ${seleccion.producto.nombre}.\nYa tienes ${carrito.find(item => item.id === id).cantidad}`);
+            return true;
+        }
+    } else {
+        if (cantidad < 0) {
+            alert(`No puedes cargar una cantidad negativa`);
+            return true;
+        }
+        else {
+            carrito.push(seleccion);
+        }
+    }
 
+    return false;
 }
 
-// function calcularPrecios(producto, cantidad) {
-//     // calculo de precios
-//     let precio = 0;
-//     switch (producto) {
-//         case 1:
-//             precio = cantidad * 1000;
-//             break;
-//         case 2:
-//             precio = cantidad * 2000;
-//             break;
-//         case 3:
-//             precio = cantidad * 3000;
-//             break;
-//         default:
-//             precio = 0;
-//             break;
-//     }
-//     return precio;
-// }
-
+ /**
+  * Solicita al usuario un id y cantidad de un producto
+  * @returns {number[]} array con los id y cantidad de los productos que se quieren comprar 
+  */
 function promptIdCantidad() {
     let idCantidad = [];
     tryAgain = true;
     do {
-        idCantidad = prompt("Ingrese el id del producto y la cantidad a comprar sin espacio\nEjemplo: 1,2\nRecuerda cargar solo un producto a la vez\n\n" + mostrarListaProductos(productos) + "Elija su producto:").split(",");
+        idCantidad = prompt('Ingrese el id del producto y la cantidad a comprar sin espacio.\nEjemplo: "1,2"\nRecuerda cargar solo un producto a la vez.\n\n' + mostrarListaProductos(productos) + 'Elija su producto:').split(',');
 
         if (idCantidad.length == 2) {
             if (parseInt(idCantidad[0]) > 1 || parseInt(idCantidad[0]) < productos.length || parseInt(idCantidad[1]) > 1) {
                 tryAgain= false;
-            } 
+            }
         } else {
             alert("El id o la cantidad no es correcto");
         }
@@ -115,40 +130,90 @@ function promptIdCantidad() {
     return idCantidad;
 }
 
-
+/**
+ * 
+ * @param {[objects]} productArray 
+ * @returns 
+ */
 function mostrarListaProductos(productArray) {
-    // mostrar lista de productos
     let productosList = "Id |    Nombre    |  Precio  |  Cantidad  |   Carrera   | Condicion\n";
     productArray.forEach(producto => { productosList += producto.toString() });
     return productosList;
 }
-// log the price of the first product in local currency
 
-function mostrarCarrito(carrito) {
-    // mostrar carrito
-    let carritoList = "Su carrito contiene:\n";
-    carrito.forEach(item => { carritoList += `${item.producto.nombre} ($ ${item.producto.precio.toLocaleString()}) --> ${item.cantidad} unidades = $ ${(item.producto.precio * item.cantidad).toLocaleString()}\n`; });
+/**
+ * 
+ * @param {string} text - texto a mostrar
+ * @returns {string} - texto con el formato de una tabla
+ */
+function mostrarCarrito(text) {
+    // let carritoList = "Su carrito contiene:\n";
+    carrito.forEach(item => { text += `${item.producto.nombre} ($ ${item.producto.precio.toLocaleString()}) --> ${item.cantidad} unidades = $ ${(item.producto.precio * item.cantidad).toLocaleString()}\n`; });
 
-    return carritoList;
-
-    // alert(carritoList);
+    return text;
 }
 
-// function imprimirTicket(precioTotal, intento) {
-//     // mostrar precios
-//     alert("El precio total para las " + intento + " compras realizadas es: $" + precioTotal);
-// }
+/**
+ * 
+ * @param {[Producto]} array - array de productos a filtrar
+ * @param {string} tipoFiltro - tipo de filtro a aplicar: "1" para filtrar por estado, "2" para filtrar por carrera
+ * @param {string} filtro - estado o carrera a filtrar
+ * @returns {[object]} array de productos filtrados
+ */
+function filtrarProductos(array,tipoFiltro, filtro) {
+    switch (tipoFiltro) {
+        case "1":
+            switch (filtro) {
+                case "Nuevo":
+                    filteredProducts = array.filter(producto => producto.condicion == "Nuevo");
+                    break;
+                case "Usado":
+                    filteredProducts = array.filter(producto => producto.condicion == "Usado");
+                    break;
+                default:
+                    filteredProducts = array;
+                    break;
+            }
+            break;
+        case "2":
+            switch (filtro) {
+                case "Arquitectura":
+                    filteredProducts = array.filter(producto => producto.carrera == "Arquitectura");
+                    break;
+                case "Economia":
+                    filteredProducts = array.filter(producto => producto.carrera == "Economia");
+                    break;
+                case "Ingenieria":
+                    filteredProducts = array.filter(producto => producto.carrera == "Ingenieria");
+                    break;
+                case "Medicina":
+                    filteredProducts = array.filter(producto => producto.carrera == "Medicina");
+                    break;
+                case "Odontologia":
+                    filteredProducts = array.filter(producto => producto.carrera == "Odontologia");
+                    break;
+            }
+            break;
+        default:
+            filteredProducts = array;
+            break;
+            
+    }
+    return filteredProducts;
+}
 
-// let bought = false;
 let precioTotal = 0;
+/**
+ * @type {[{id:number,cantidad:number,producto:Producto}]}
+ */
 let carrito = [];
-
 
 do {
     opcion = parseInt(prompt(`Seleccione una opcion:
     1. Agregar producto al carrito
     2. Comprar productos
     3. Mostrar carrito
+    4. Filtrar productos
     0. Salir`));
     switch (opcion) {
         case 0:
@@ -156,14 +221,10 @@ do {
             break;
 
         case 1:
-            // bought = true;
-            
-            let idCantidad = promptIdCantidad();
-
-            cargarCarrito(idCantidad);
-
-            // precioTotal = comprar(carrito);
-            // mostrarCarrito(carrito);
+            let idCantidad = []
+            do {
+                idCantidad = promptIdCantidad();
+            } while (cargarCarrito(idCantidad));
 
             break;
 
@@ -173,11 +234,12 @@ do {
                 break;
             }
             else {
-                if (confirm("¿Desea comprar los productos en el carrito?\n" + mostrarCarrito(carrito))) {
+                if (confirm("¿Desea comprar los productos en el carrito?\n" + mostrarCarrito(`Su carrito contiene:\n`))) {
                     precioTotal = comprar(carrito);
                     if (precioTotal != -1) {
-                        carrito = [];
                         alert("Gracias por su compra, a continuacion le dejamos su ticket");
+                        alert(`Comprobante Nº${Math.trunc(Math.random() * 10000)}\n\n${mostrarCarrito(`Productos comprados:\n`)}\nSu total es: $ ${precioTotal.toLocaleString()}`);
+                        carrito = [];
                     }
                     else {
                         alert("No se pudo realizar la compra");
@@ -191,8 +253,6 @@ do {
                         carrito = [];
                     }
                 }
-                
-                // imprimirTicket(precioTotal, intento);
                 break;
             }
 
@@ -202,9 +262,68 @@ do {
                 break;
             }
             else {
-                alert(mostrarCarrito(carrito));
+                alert(mostrarCarrito(`Su carrito contiene:\n`));
                 break;
             }
+
+        case 4:
+            do {
+                tipoFiltro = prompt(`Seleccione una opcion:\n1. Filtrar por condicion\n2. Filtrar por carrera\n0. Volver`);
+                switch (tipoFiltro) {
+                    case "0":
+                        break;
+
+                    case "1":
+                        filtro = prompt(`Seleccione una opcion:\n1. Nuevo\n2. Usado\n`);
+                        switch (filtro) {
+                            case "1":
+                                filtro = "Nuevo";
+                                break;
+                            case "2":
+                                filtro = "Usado";
+                                break;
+                            default:
+                                alert("Opcion no valida, se muestran todos los productos");
+                                break;
+                        }
+                        if (filtro != "") {
+                            alert(mostrarListaProductos(filtrarProductos(productos, tipoFiltro, filtro)));
+                        }
+                        break;
+
+                    case "2":
+                        filtro = prompt(`Seleccione una opcion:\n1. Arquitectura\n2. Economia\n3. Ingenieria\n4. Medicina\n5. Odontologia\n`);
+                        switch (filtro) {
+                            case "1":
+                                filtro = "Arquitectura";
+                                break;
+                            case "2":
+                                filtro = "Economia";
+                                break;
+                            case "3":
+                                filtro = "Ingenieria";
+                                break;
+                            case "4":
+                                filtro = "Medicina";
+                                break;
+                            case "5":
+                                filtro = "Odontologia";
+                                break;
+                            default:
+                                alert("Opcion no valida, se muestran todos los productos");
+                                break;
+                        }
+                        if (filtro != "") {
+                            alert(mostrarListaProductos(filtrarProductos(productos, tipoFiltro, filtro)));
+                        }
+                        break;
+
+                    default:
+                        alert("Opcion no valida");
+                        break;
+                }
+            } while (tipoFiltro != "0");
+            break;
 
         default:
             alert("Opcion no valida");
