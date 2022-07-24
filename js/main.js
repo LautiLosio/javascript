@@ -1,13 +1,14 @@
 alert("Bienvenido a Universify Web");
 
 class Producto {
-    constructor(id, nombre, precio, cantidad, carrera, condicion) {
+    constructor(id, nombre, precio, cantidad, carrera, condicion, imagen) {
         this.id = id;
         this.nombre = nombre;
         this.precio = precio;
         this.cantidad = cantidad;
         this.carrera = carrera;
         this.condicion = condicion;
+        this.imagen = imagen;
     }
 
     buy(amount) {
@@ -28,19 +29,32 @@ class Producto {
  * @type {Producto[]}
  */
 const productos = [
-    new Producto(1, "Tablero", 38150, 5, "Arquitectura", "Nuevo"),
-    new Producto(2, "Craneo", 45134, 5, "Odontologia", "Nuevo"),
-    new Producto(3, "Escuadras", 4280, 10, "Ingenieria", "Nuevo"),
-    new Producto(4, "Ambo", 3210, 20, "Medicina", "Nuevo"),
-    new Producto(5, "Calculadora", 10700, 1, "Ingenieria", "Usado"),
-    new Producto(6, "Kit", 6420, 1, "Medicina", "Usado"),
-    new Producto(7, "Apuntes", 2200, 1, "Ingenieria", "Usado"),
-    new Producto(8, "Huesos", 9500, 1, "Medicina", "Usado"),
-    new Producto(9, "Estetoscopios", 12500, 5, "Medicina", "Nuevo"),
-    new Producto(10, "Microeconomia", 5350, 1, "Economia", "Usado"),
-    new Producto(11, "Libro", 5900, 1, "Economia", "Usado"),
-    new Producto(12, "Matematica", 14980, 1, "Economia", "Usado")
+    new Producto(1, "Tablero", 38150, 5, "Arquitectura", "Nuevo", "./media/tablero.jpg"),
+    new Producto(2, "Craneo", 45134, 5, "Odontologia", "Nuevo", "./media/craneo.jpg"),
+    new Producto(3, "Escuadras", 4280, 10, "Ingenieria", "Nuevo", "./media/escuadras.jpg"),
+    new Producto(4, "Ambo", 3210, 20, "Medicina", "Nuevo", "./media/ambo.jpg"),
+    new Producto(5, "Calculadora", 10700, 1, "Ingenieria", "Usado", "./media/calculadora.jpg"),
+    new Producto(6, "Kit", 6420, 1, "Medicina", "Usado", "./media/kit.jpg"),
+    new Producto(7, "Apuntes", 2200, 1, "Ingenieria", "Usado", "./media/apuntes.jpg"),
+    new Producto(8, "Huesos", 9500, 1, "Medicina", "Usado", "./media/huesos.jpg"),
+    new Producto(9, "Estetoscopios", 12500, 5, "Medicina", "Nuevo", "./media/estetoscopio.jpg"),
+    new Producto(10, "Microeconomia", 5350, 1, "Economia", "Usado", "./media/microeconomia.png"),
+    new Producto(11, "Libro", 5900, 1, "Economia", "Usado", "./media/libro_moneda.jpg"),
+    new Producto(12, "Matematica", 14980, 1, "Economia", "Usado", "./media/matematica.jpg")
 ]
+
+
+for (let i = 1; i <= 12; i++) {
+    let item = document.querySelector(`.img${i}`);
+    let imagen = item.querySelector("img");
+    let nombre = item.querySelector("figcaption p");
+    let precio = item.querySelector("figcaption h5");
+
+    imagen.src = productos[i - 1].imagen;
+    nombre.innerHTML = productos[i - 1].nombre;
+    precio.innerHTML = `$${productos[i-1].precio.toLocaleString()}`;
+
+}
 
 /**
  * Realiza la compra para cada producto del carrito
@@ -87,8 +101,7 @@ function cargarCarrito(idCantidad) {
         let newCant = carrito.find(item => item.id === id).cantidad + cantidad;
         if (productos.find(item => item.id === id).cantidad >= newCant) {
             carrito.find(item => item.id === id).cantidad = newCant;
-        }
-        else {
+        } else {
             alert(`No puedes cargar mas de ${seleccion.producto.cantidad} unidades de ${seleccion.producto.nombre}.\nYa tienes ${carrito.find(item => item.id === id).cantidad}`);
             return true;
         }
@@ -96,8 +109,7 @@ function cargarCarrito(idCantidad) {
         if (cantidad < 0) {
             alert(`No puedes cargar una cantidad negativa`);
             return true;
-        }
-        else {
+        } else {
             carrito.push(seleccion);
         }
     }
@@ -105,10 +117,10 @@ function cargarCarrito(idCantidad) {
     return false;
 }
 
- /**
-  * Solicita al usuario un id y cantidad de un producto
-  * @returns {number[]} array con los id y cantidad de los productos que se quieren comprar 
-  */
+/**
+ * Solicita al usuario un id y cantidad de un producto
+ * @returns {number[]} array con los id y cantidad de los productos que se quieren comprar 
+ */
 function promptIdCantidad() {
     let idCantidad = [];
     tryAgain = true;
@@ -117,7 +129,7 @@ function promptIdCantidad() {
 
         if (idCantidad.length == 2) {
             if (parseInt(idCantidad[0]) > 1 || parseInt(idCantidad[0]) < productos.length || parseInt(idCantidad[1]) > 1) {
-                tryAgain= false;
+                tryAgain = false;
             }
         } else {
             alert("El id o la cantidad no es correcto");
@@ -160,7 +172,7 @@ function mostrarCarrito(text) {
  * @param {string} filtro - estado o carrera a filtrar
  * @returns {[object]} array de productos filtrados
  */
-function filtrarProductos(array,tipoFiltro, filtro) {
+function filtrarProductos(array, tipoFiltro, filtro) {
     switch (tipoFiltro) {
         case "1":
             switch (filtro) {
@@ -197,7 +209,7 @@ function filtrarProductos(array,tipoFiltro, filtro) {
         default:
             filteredProducts = array;
             break;
-            
+
     }
     return filteredProducts;
 }
@@ -232,8 +244,7 @@ do {
             if (carrito.length == 0) {
                 alert("No hay productos en el carrito");
                 break;
-            }
-            else {
+            } else {
                 if (confirm("¿Desea comprar los productos en el carrito?\n" + mostrarCarrito(`Su carrito contiene:\n`))) {
                     precioTotal = comprar(carrito);
                     if (precioTotal != -1) {
