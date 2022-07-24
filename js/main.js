@@ -38,7 +38,7 @@ const productos = [
     new Producto(7, "Apuntes", 2200, 1, "Ingenieria", "Usado", "./media/apuntes.jpg"),
     new Producto(8, "Huesos", 9500, 1, "Medicina", "Usado", "./media/huesos.jpg"),
     new Producto(9, "Estetoscopios", 12500, 5, "Medicina", "Nuevo", "./media/estetoscopio.jpg"),
-    new Producto(10, "Microeconomia", 5350, 1, "Economia", "Usado", "./media/microeconomia.png"),
+    new Producto(10, "Microeconomia", 5350, 1, "Economia", "Usado", "./media/microeconomia.jpg"),
     new Producto(11, "Libro", 5900, 1, "Economia", "Usado", "./media/libro_moneda.jpg"),
     new Producto(12, "Matematica", 14980, 1, "Economia", "Usado", "./media/matematica.jpg")
 ]
