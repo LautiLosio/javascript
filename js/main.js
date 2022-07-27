@@ -1,5 +1,3 @@
-alert("Bienvenido a Universify Web");
-
 class Producto {
     constructor(id, nombre, precio, cantidad, carrera, condicion, imagen) {
         this.id = id;
@@ -43,37 +41,131 @@ const productos = [
     new Producto(12, "Matematica", 14980, 1, "Economia", "Usado", "./media/matematica.jpg")
 ]
 
+let carrito = [];
 
-for (let i = 1; i <= 12; i++) {
-    let item = document.querySelector(`.img${i}`);
-    let imagen = item.querySelector("img");
-    let nombre = item.querySelector("figcaption p");
-    let precio = item.querySelector("figcaption h5");
 
-    imagen.src = productos[i - 1].imagen;
-    nombre.innerHTML = productos[i - 1].nombre;
-    precio.innerHTML = `$${productos[i-1].precio.toLocaleString()}`;
-
-}
+const imgGrid = document.querySelector("#img-grid");
 
 /**
- * Realiza la compra para cada producto del carrito
- * @param {[{id:number,cantidad:number,producto:Producto}]} carrito - array de objetos que contienen el id, cantidad y producto que se quiere comprar
- * @returns {number} el total de la compra, -1 si no se pudo comprar algun producto
+ * Crea el html para mostrar los productos en la pagina
+ * 
+ * @param {*} array - lista de productos que se van a mostrar en la pagina
  */
-function comprar(carrito) {
-    let total = 0;
+function loadProducts (array) {
+    imgGrid.textContent = "";
+    if (array.length > 0) {
+        for (let i = 0; i < array.length; i++) {
+            let item = array[i];
+            let figure = document.createElement("figure");
+            let img = document.createElement("img");
+            let name = document.createElement("h4");
+            let figcaption = document.createElement("figcaption");
+            let price = document.createElement("h5");
+            
+            let stock = document.createElement("p");
+            stock.innerHTML = `Stock: ${item.cantidad}`;
+            
+            let selectorContainer = document.createElement("div");
+            selectorContainer.className = "selector-container";
+            
+
+
+            let selector = document.createElement("input");
+            
+            selector.className = "selector";
+            selector.type = "number";
+            selector.min = "0";
+            selector.max = item.cantidad;
+            selector.readOnly = true;
+            if (carrito.length > 0) {
+                let found = carrito.find(item => item.producto.id === array[i].id);
+                if (found) {
+                    selector.value = found.cantidad;
+                } else {
+                    selector.value = 0;
+                }
+            } else {
+                selector.value = 0;
+            }
+            
+            let plus = document.createElement("button");
+            plus.className = "add-button";
+            plus.innerHTML = "+";
+            plus.addEventListener("click", () => { 
+                selector.stepUp(1);
+                selector.value = cargarCarrito(item.id,selector.valueAsNumber);
+                if (selector.valueAsNumber > 0) {
+                    figure.classList.add("in-cart");
+                }
+                updateCarritoButton();
+            });
+            if (selector.valueAsNumber > 0) {
+                figure.classList.add("in-cart");
+            }
+            
+            let minus = document.createElement("button");
+            minus.className = "remove-button";
+            minus.innerHTML = "-";
+            minus.addEventListener("click", () => { 
+                selector.stepDown(1);
+                selector.value = cargarCarrito(item.id,selector.valueAsNumber);
+                if (selector.valueAsNumber === 0) {
+                    figure.classList.remove("in-cart");
+                }
+                updateCarritoButton();
+            });
+            if (selector.valueAsNumber === 0) {
+                figure.classList.remove("in-cart");
+            }
+
+            // selector.addEventListener("change", () => {selector.value = cargarCarrito(item.id,selector.valueAsNumber); updateCarritoButton();});
+
+
+            img.src = item.imagen;
+            if (item.cantidad == 0) {
+                figure.classList.add("out-of-stock");
+            }
+            price.innerHTML = `$${item.precio.toLocaleString()}`;
+            name.innerHTML = item.nombre;
+
+            selectorContainer.appendChild(minus);
+            selectorContainer.appendChild(selector);
+            selectorContainer.appendChild(plus);
+            
+            figure.appendChild(img);
+            figure.appendChild(name);
+            figure.appendChild(figcaption);
+            figcaption.appendChild(price);
+            figcaption.appendChild(stock);
+            figcaption.appendChild(selectorContainer);
+            
+            imgGrid.appendChild(figure);
+        }
+    } else {
+        let p = document.createElement("p");
+        p.className = "no-products";
+        p.innerHTML = "No hay productos disponibles";
+        imgGrid.appendChild(p);
+    }
+}
+
+loadProducts(productos);
+
+function comprar() {
     for (const item of carrito) {
         if (item.producto.disponible(item.cantidad)) {
             item.producto.buy(item.cantidad);
-            total += item.producto.precio * item.cantidad;
         } else {
             alert(`El producto ${item.producto.nombre} no tiene suficientes unidades`);
-            return -1;
+            return;
         }
     }
-
-    return total;
+    
+    alert(`Compra realizada con exito`);
+    carrito = [];
+    filtrarProductos();
+    updateCarritoButton();
+    return;
 }
 
 /**
@@ -81,40 +173,73 @@ function comprar(carrito) {
  * @param {number[]} idCantidad array con el id y cantidad del producto que se quiere comprar
  * @returns {boolean} true si fallo y no se agrego al carrito, false si se agrego al carrito
  */
-function cargarCarrito(idCantidad) {
-
-    let id = idCantidad[0];
-    let cantidad = idCantidad[1];
+function cargarCarrito(id, cantidad) {
 
     let seleccion = {
         id: id,
         cantidad: cantidad,
-        producto: productos.find(producto => producto.id == idCantidad[0]),
+        producto: productos.find(producto => producto.id == id),
+    }
+
+    let found = carrito.find(item => item.producto.id === seleccion.producto.id);
+
+    if (cantidad < 0) {
+        alert("La cantidad debe ser mayor a 0");
+        if (found) {
+            return found.cantidad;
+        } else {
+            return 0;
+        }
     }
 
     if (cantidad > seleccion.producto.cantidad) {
         alert(`El producto ${seleccion.producto.nombre} no tiene suficientes unidades`);
-        return true;
-    }
-
-    if (carrito.some(item => item.id === id)) {
-        let newCant = carrito.find(item => item.id === id).cantidad + cantidad;
-        if (productos.find(item => item.id === id).cantidad >= newCant) {
-            carrito.find(item => item.id === id).cantidad = newCant;
+        if (found) {
+            return found.cantidad;
         } else {
-            alert(`No puedes cargar mas de ${seleccion.producto.cantidad} unidades de ${seleccion.producto.nombre}.\nYa tienes ${carrito.find(item => item.id === id).cantidad}`);
-            return true;
+            return 0;
+        }
+    }
+    
+    if (found) {
+        if (productos.find(item => item.id === id).cantidad >= cantidad) {
+            found.cantidad = cantidad;
+        } else {
+            alert(`No puedes cargar mas de ${seleccion.producto.cantidad} unidades de ${seleccion.producto.nombre}.\nYa tienes ${found.cantidad}`);
+            if (found) {
+                return found.cantidad;
+            } else {
+                return 0;
+            }
         }
     } else {
-        if (cantidad < 0) {
-            alert(`No puedes cargar una cantidad negativa`);
-            return true;
-        } else {
             carrito.push(seleccion);
-        }
     }
 
-    return false;
+    
+    return cantidad;
+}
+
+let carritoButton = document.querySelector("#carrito-button");
+carritoButton.addEventListener("click", () => { comprar() });
+
+function updateCarritoButton() {
+    let carritoButtonText = document.querySelector("#carrito-button p");
+    
+    let total = 0;
+    for (const item of carrito) {
+        total += item.producto.precio * item.cantidad;
+    }
+    
+    if (total > 0) {
+        carritoButton.classList.remove("hidden");
+        carritoButtonText.innerHTML = `Total: $${total.toLocaleString()}`;
+    }
+    
+    if (total === 0) {
+        carritoButton.classList.add("hidden");
+    }
+    
 }
 
 /**
@@ -165,179 +290,162 @@ function mostrarCarrito(text) {
     return text;
 }
 
-/**
- * 
- * @param {[Producto]} array - array de productos a filtrar
- * @param {string} tipoFiltro - tipo de filtro a aplicar: "1" para filtrar por estado, "2" para filtrar por carrera
- * @param {string} filtro - estado o carrera a filtrar
- * @returns {[object]} array de productos filtrados
- */
-function filtrarProductos(array, tipoFiltro, filtro) {
-    switch (tipoFiltro) {
-        case "1":
-            switch (filtro) {
-                case "Nuevo":
-                    filteredProducts = array.filter(producto => producto.condicion == "Nuevo");
-                    break;
-                case "Usado":
-                    filteredProducts = array.filter(producto => producto.condicion == "Usado");
-                    break;
-                default:
-                    filteredProducts = array;
-                    break;
-            }
-            break;
-        case "2":
-            switch (filtro) {
-                case "Arquitectura":
-                    filteredProducts = array.filter(producto => producto.carrera == "Arquitectura");
-                    break;
-                case "Economia":
-                    filteredProducts = array.filter(producto => producto.carrera == "Economia");
-                    break;
-                case "Ingenieria":
-                    filteredProducts = array.filter(producto => producto.carrera == "Ingenieria");
-                    break;
-                case "Medicina":
-                    filteredProducts = array.filter(producto => producto.carrera == "Medicina");
-                    break;
-                case "Odontologia":
-                    filteredProducts = array.filter(producto => producto.carrera == "Odontologia");
-                    break;
-            }
-            break;
-        default:
-            filteredProducts = array;
-            break;
+function filtrarProductos () {
+    let filteredProducts = productos;
 
+    if (carrera != "") {
+        filteredProducts = filteredProducts.filter(producto => producto.carrera == carrera);
+        if (condicion != "") {
+            filteredProducts = filteredProducts.filter(producto => producto.condicion == condicion);
+        }
+    } else {
+        if (condicion != "") {
+            filteredProducts = filteredProducts.filter(producto => producto.condicion == condicion);
+            if (carrera != "") {
+                filteredProducts = filteredProducts.filter(producto => producto.carrera == carrera);
+            }
+        }
     }
-    return filteredProducts;
+        
+    loadProducts(filteredProducts);
 }
+
+let carrera = "";
+let condicion = "";
+
+let conditionFilter = document.querySelector("#condicion");
+let carreraFilter = document.querySelector("#carrera");
+let resetFilter = document.querySelector("#resetFilter");
+conditionFilter.addEventListener("change", () => { condicion = conditionFilter.value; filtrarProductos(); });
+carreraFilter.addEventListener("change", () => { carrera = carreraFilter.value; filtrarProductos(); });
+resetFilter.addEventListener("click", () => { loadProducts(productos); condicion = ""; carrera = ""; });
+
+// ######################################################################################################################
 
 let precioTotal = 0;
 /**
  * @type {[{id:number,cantidad:number,producto:Producto}]}
  */
-let carrito = [];
-
-do {
-    opcion = parseInt(prompt(`Seleccione una opcion:
-    1. Agregar producto al carrito
-    2. Comprar productos
-    3. Mostrar carrito
-    4. Filtrar productos
-    0. Salir`));
-    switch (opcion) {
-        case 0:
-            alert("Para iniciar la compra, vuelva a cargar la pagina");
-            break;
-
-        case 1:
-            let idCantidad = []
-            do {
-                idCantidad = promptIdCantidad();
-            } while (cargarCarrito(idCantidad));
-
-            break;
-
-        case 2:
-            if (carrito.length == 0) {
-                alert("No hay productos en el carrito");
+function main() {
+    do {
+        opcion = parseInt(prompt(`Seleccione una opcion:
+        1. Agregar producto al carrito
+        2. Comprar productos
+        3. Mostrar carrito
+        4. Filtrar productos
+        0. Salir`));
+        switch (opcion) {
+            case 0:
+                alert("Para iniciar la compra, vuelva a cargar la pagina");
                 break;
-            } else {
-                if (confirm("¿Desea comprar los productos en el carrito?\n" + mostrarCarrito(`Su carrito contiene:\n`))) {
-                    precioTotal = comprar(carrito);
-                    if (precioTotal != -1) {
-                        alert("Gracias por su compra, a continuacion le dejamos su ticket");
-                        alert(`Comprobante Nº${Math.trunc(Math.random() * 10000)}\n\n${mostrarCarrito(`Productos comprados:\n`)}\nSu total es: $ ${precioTotal.toLocaleString()}`);
-                        carrito = [];
+
+            case 1:
+                let idCantidad = []
+                do {
+                    idCantidad = promptIdCantidad();
+                } while (cargarCarrito(idCantidad));
+
+                break;
+
+            case 2:
+                if (carrito.length == 0) {
+                    alert("No hay productos en el carrito");
+                    break;
+                } else {
+                    if (confirm("¿Desea comprar los productos en el carrito?\n" + mostrarCarrito(`Su carrito contiene:\n`))) {
+                        precioTotal = comprar(carrito);
+                        if (precioTotal != -1) {
+                            alert("Gracias por su compra, a continuacion le dejamos su ticket");
+                            alert(`Comprobante Nº${Math.trunc(Math.random() * 10000)}\n\n${mostrarCarrito(`Productos comprados:\n`)}\nSu total es: $ ${precioTotal.toLocaleString()}`);
+                            carrito = [];
+                        }
+                        else {
+                            alert("No se pudo realizar la compra");
+                            if (confirm("Desea vaciar su carrito?")) {
+                                carrito = [];
+                            }
+                        }
                     }
                     else {
-                        alert("No se pudo realizar la compra");
                         if (confirm("Desea vaciar su carrito?")) {
                             carrito = [];
                         }
                     }
+                    break;
+                }
+
+            case 3:
+                if (carrito.length == 0) {
+                    alert("No hay productos en el carrito");
+                    break;
                 }
                 else {
-                    if (confirm("Desea vaciar su carrito?")) {
-                        carrito = [];
+                    alert(mostrarCarrito(`Su carrito contiene:\n`));
+                    break;
+                }
+
+            case 4:
+                do {
+                    tipoFiltro = prompt(`Seleccione una opcion:\n1. Filtrar por condicion\n2. Filtrar por carrera\n0. Volver`);
+                    switch (tipoFiltro) {
+                        case "0":
+                            break;
+
+                        case "1":
+                            filtro = prompt(`Seleccione una opcion:\n1. Nuevo\n2. Usado\n`);
+                            switch (filtro) {
+                                case "1":
+                                    filtro = "Nuevo";
+                                    break;
+                                case "2":
+                                    filtro = "Usado";
+                                    break;
+                                default:
+                                    alert("Opcion no valida, se muestran todos los productos");
+                                    break;
+                            }
+                            if (filtro != "") {
+                                alert(mostrarListaProductos(filtrarProductos(productos, tipoFiltro, filtro)));
+                            }
+                            break;
+
+                        case "2":
+                            filtro = prompt(`Seleccione una opcion:\n1. Arquitectura\n2. Economia\n3. Ingenieria\n4. Medicina\n5. Odontologia\n`);
+                            switch (filtro) {
+                                case "1":
+                                    filtro = "Arquitectura";
+                                    break;
+                                case "2":
+                                    filtro = "Economia";
+                                    break;
+                                case "3":
+                                    filtro = "Ingenieria";
+                                    break;
+                                case "4":
+                                    filtro = "Medicina";
+                                    break;
+                                case "5":
+                                    filtro = "Odontologia";
+                                    break;
+                                default:
+                                    alert("Opcion no valida, se muestran todos los productos");
+                                    break;
+                            }
+                            if (filtro != "") {
+                                alert(mostrarListaProductos(filtrarProductos(productos, tipoFiltro, filtro)));
+                            }
+                            break;
+
+                        default:
+                            alert("Opcion no valida");
+                            break;
                     }
-                }
+                } while (tipoFiltro != "0");
                 break;
-            }
 
-        case 3:
-            if (carrito.length == 0) {
-                alert("No hay productos en el carrito");
+            default:
+                alert("Opcion no valida");
                 break;
-            }
-            else {
-                alert(mostrarCarrito(`Su carrito contiene:\n`));
-                break;
-            }
-
-        case 4:
-            do {
-                tipoFiltro = prompt(`Seleccione una opcion:\n1. Filtrar por condicion\n2. Filtrar por carrera\n0. Volver`);
-                switch (tipoFiltro) {
-                    case "0":
-                        break;
-
-                    case "1":
-                        filtro = prompt(`Seleccione una opcion:\n1. Nuevo\n2. Usado\n`);
-                        switch (filtro) {
-                            case "1":
-                                filtro = "Nuevo";
-                                break;
-                            case "2":
-                                filtro = "Usado";
-                                break;
-                            default:
-                                alert("Opcion no valida, se muestran todos los productos");
-                                break;
-                        }
-                        if (filtro != "") {
-                            alert(mostrarListaProductos(filtrarProductos(productos, tipoFiltro, filtro)));
-                        }
-                        break;
-
-                    case "2":
-                        filtro = prompt(`Seleccione una opcion:\n1. Arquitectura\n2. Economia\n3. Ingenieria\n4. Medicina\n5. Odontologia\n`);
-                        switch (filtro) {
-                            case "1":
-                                filtro = "Arquitectura";
-                                break;
-                            case "2":
-                                filtro = "Economia";
-                                break;
-                            case "3":
-                                filtro = "Ingenieria";
-                                break;
-                            case "4":
-                                filtro = "Medicina";
-                                break;
-                            case "5":
-                                filtro = "Odontologia";
-                                break;
-                            default:
-                                alert("Opcion no valida, se muestran todos los productos");
-                                break;
-                        }
-                        if (filtro != "") {
-                            alert(mostrarListaProductos(filtrarProductos(productos, tipoFiltro, filtro)));
-                        }
-                        break;
-
-                    default:
-                        alert("Opcion no valida");
-                        break;
-                }
-            } while (tipoFiltro != "0");
-            break;
-
-        default:
-            alert("Opcion no valida");
-            break;
-    }
-} while (opcion != 0);
+        }
+    } while (opcion != 0);
+}
