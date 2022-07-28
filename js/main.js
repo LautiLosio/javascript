@@ -52,31 +52,31 @@ const imgGrid = document.querySelector("#img-grid");
  * @param {*} array - lista de productos que se van a mostrar en la pagina
  */
 function loadProducts (array) {
+    // Limpia el contenido de la pagina
     imgGrid.textContent = "";
+
     if (array.length > 0) {
         for (let i = 0; i < array.length; i++) {
+            // Declaro todas las variables que necesito para crear el html
             let item = array[i];
             let figure = document.createElement("figure");
             let img = document.createElement("img");
             let name = document.createElement("h4");
             let figcaption = document.createElement("figcaption");
             let price = document.createElement("h5");
-            
             let stock = document.createElement("p");
-            stock.innerHTML = `Stock: ${item.cantidad}`;
-            
+            let selector = document.createElement("input");
             let selectorContainer = document.createElement("div");
             selectorContainer.className = "selector-container";
             
-
-
-            let selector = document.createElement("input");
-            
+            // Seteo los atributos de los elementos
+            stock.innerHTML = `Stock: ${item.cantidad}`;
             selector.className = "selector";
             selector.type = "number";
             selector.min = "0";
             selector.max = item.cantidad;
             selector.readOnly = true;
+            // Cargo el valor del selector con la cantidad de productos disponibles
             if (carrito.length > 0) {
                 let found = carrito.find(item => item.producto.id === array[i].id);
                 if (found) {
@@ -88,9 +88,11 @@ function loadProducts (array) {
                 selector.value = 0;
             }
             
+            // Creo el boton de agregar al carrito (esto es para poder controlar los tipos de datos que el usuario puede ingresar)
             let plus = document.createElement("button");
             plus.className = "add-button";
             plus.innerHTML = "+";
+            // Agrega el producto al carrito cuando se hace click en el boton de agregar y actualiza el contenido del selector
             plus.addEventListener("click", () => { 
                 selector.stepUp(1);
                 selector.value = cargarCarrito(item.id,selector.valueAsNumber);
@@ -99,13 +101,16 @@ function loadProducts (array) {
                 }
                 updateCarritoButton();
             });
+            // Actualiza la class de la figura para que se muestre el border de color verde
             if (selector.valueAsNumber > 0) {
                 figure.classList.add("in-cart");
             }
             
+            // Creo el boton de quitar del carrito
             let minus = document.createElement("button");
             minus.className = "remove-button";
             minus.innerHTML = "-";
+            // Quita el producto del carrito cuando se hace click en el boton de quitar y actualiza el contenido del selector
             minus.addEventListener("click", () => { 
                 selector.stepDown(1);
                 selector.value = cargarCarrito(item.id,selector.valueAsNumber);
@@ -114,24 +119,26 @@ function loadProducts (array) {
                 }
                 updateCarritoButton();
             });
+            // Actualiza la class de la figura para que se no muestre el border de color verde
             if (selector.valueAsNumber === 0) {
                 figure.classList.remove("in-cart");
             }
 
-            // selector.addEventListener("change", () => {selector.value = cargarCarrito(item.id,selector.valueAsNumber); updateCarritoButton();});
-
-
+            // Cargo la imagen del producto en el html
             img.src = item.imagen;
+            // Agrega la clase "out-of-stock" a la figura si el stock es 0
             if (item.cantidad == 0) {
                 figure.classList.add("out-of-stock");
             }
             price.innerHTML = `$${item.precio.toLocaleString()}`;
             name.innerHTML = item.nombre;
 
+            // creo el html para el selector
             selectorContainer.appendChild(minus);
             selectorContainer.appendChild(selector);
             selectorContainer.appendChild(plus);
             
+            // Creo el html para la figura
             figure.appendChild(img);
             figure.appendChild(name);
             figure.appendChild(figcaption);
@@ -139,9 +146,11 @@ function loadProducts (array) {
             figcaption.appendChild(stock);
             figcaption.appendChild(selectorContainer);
             
+            // Agrega el html de producto completo al contenedor de la pagina
             imgGrid.appendChild(figure);
         }
     } else {
+        // Si no hay productos en el array, muestro un mensaje al usuario
         let p = document.createElement("p");
         p.className = "no-products";
         p.innerHTML = "No hay productos disponibles";
@@ -149,8 +158,14 @@ function loadProducts (array) {
     }
 }
 
+// Carga inicial de todos los productos
 loadProducts(productos);
 
+/**
+ * Realiza la compra de todos los productos del carrito
+ * 
+ * @returns no devuelve nada
+ */
 function comprar() {
     for (const item of carrito) {
         if (item.producto.disponible(item.cantidad)) {
@@ -169,20 +184,28 @@ function comprar() {
 }
 
 /**
- * Recibe un array con el id y cantidad del producto que se quiere comprar y lo agrega al carrito dependiendo de varias condiciones
- * @param {number[]} idCantidad array con el id y cantidad del producto que se quiere comprar
- * @returns {boolean} true si fallo y no se agrego al carrito, false si se agrego al carrito
+ * Actualiza los productos del carrito.
+ * 
+ * Esta funcion quedo un poco desactualizada ya que ahora se previene la carga incorrecta desde el html, pero la dejo para prevenir un intento de compra por consola.
+ * 
+ * @param {number} id - id del producto que se quiere agregar al carrito
+ * @param {number} cantidad - cantidad de productos que se quiere agregar al carrito 
+ * 
+ * @returns {number} devuelve un numero que corrige el valor del selector en caso de que la cantidad que se quiere agregar no sea valida (negativa o mayor a la cantidad disponible)
  */
 function cargarCarrito(id, cantidad) {
 
+    // creo un objeto con el id y cantidad del producto que se quiere comprar y le asocio el producto correspondiente
     let seleccion = {
         id: id,
         cantidad: cantidad,
         producto: productos.find(producto => producto.id == id),
     }
 
+    // Busco el producto en el carrito para ver si ya existe
     let found = carrito.find(item => item.producto.id === seleccion.producto.id);
 
+    // Si la cantidad es menor a 0, muestro un mensaje de error (esto quedo viejo ya que se previenen estos casos desde el html)
     if (cantidad < 0) {
         alert("La cantidad debe ser mayor a 0");
         if (found) {
@@ -192,6 +215,7 @@ function cargarCarrito(id, cantidad) {
         }
     }
 
+    // Si la cantidad que se quiere comprar es mayor a la cantidad disponible, muestro un mensaje de error (esto tambien quedo deprecado)
     if (cantidad > seleccion.producto.cantidad) {
         alert(`El producto ${seleccion.producto.nombre} no tiene suficientes unidades`);
         if (found) {
@@ -201,6 +225,7 @@ function cargarCarrito(id, cantidad) {
         }
     }
     
+    // Si el producto ya existe en el carrito, solo actualizo la cantidad
     if (found) {
         if (productos.find(item => item.id === id).cantidad >= cantidad) {
             found.cantidad = cantidad;
@@ -213,29 +238,37 @@ function cargarCarrito(id, cantidad) {
             }
         }
     } else {
-            carrito.push(seleccion);
+        // Si el producto no existe en el carrito, lo agrego
+        carrito.push(seleccion);
     }
 
-    
     return cantidad;
 }
 
+// Guardo el boton de comprar en una variable para poder llamarlo desde cualquier parte de la pagina
 let carritoButton = document.querySelector("#carrito-button");
+// Agrego el evento click al boton de comprar llamando a la funcion comprar
 carritoButton.addEventListener("click", () => { comprar() });
 
+/**
+ * Actualiza el contenido del boton de carrito para que se muestre el precio total del carrito
+ */
 function updateCarritoButton() {
     let carritoButtonText = document.querySelector("#carrito-button p");
     
+    // Hago una suma de todos los precios del carrito
     let total = 0;
     for (const item of carrito) {
         total += item.producto.precio * item.cantidad;
     }
     
+    // Muestro el precio total en el boton de carrito si hay productos en el carrito
     if (total > 0) {
         carritoButton.classList.remove("hidden");
         carritoButtonText.innerHTML = `Total: $${total.toLocaleString()}`;
     }
     
+    // Si el carrito esta vacio, oculto el boton
     if (total === 0) {
         carritoButton.classList.add("hidden");
     }
@@ -243,53 +276,8 @@ function updateCarritoButton() {
 }
 
 /**
- * Solicita al usuario un id y cantidad de un producto
- * @returns {number[]} array con los id y cantidad de los productos que se quieren comprar 
+ * Toma los valores de los selectores de carrera y condicion y filtra los productos disponibles, luego llama a la funcion 'loadProducts()' para actualizar el contenido de la pagina con los productos filtrados
  */
-function promptIdCantidad() {
-    let idCantidad = [];
-    tryAgain = true;
-    do {
-        idCantidad = prompt('Ingrese el id del producto y la cantidad a comprar sin espacio.\nEjemplo: "1,2"\nRecuerda cargar solo un producto a la vez.\n\n' + mostrarListaProductos(productos) + 'Elija su producto:').split(',');
-
-        if (idCantidad.length == 2) {
-            if (parseInt(idCantidad[0]) > 1 || parseInt(idCantidad[0]) < productos.length || parseInt(idCantidad[1]) > 1) {
-                tryAgain = false;
-            }
-        } else {
-            alert("El id o la cantidad no es correcto");
-        }
-
-    } while (tryAgain);
-
-    idCantidad = [parseInt(idCantidad[0]), parseInt(idCantidad[1])];
-
-    return idCantidad;
-}
-
-/**
- * 
- * @param {[objects]} productArray 
- * @returns 
- */
-function mostrarListaProductos(productArray) {
-    let productosList = "Id |    Nombre    |  Precio  |  Cantidad  |   Carrera   | Condicion\n";
-    productArray.forEach(producto => { productosList += producto.toString() });
-    return productosList;
-}
-
-/**
- * 
- * @param {string} text - texto a mostrar
- * @returns {string} - texto con el formato de una tabla
- */
-function mostrarCarrito(text) {
-    // let carritoList = "Su carrito contiene:\n";
-    carrito.forEach(item => { text += `${item.producto.nombre} ($ ${item.producto.precio.toLocaleString()}) --> ${item.cantidad} unidades = $ ${(item.producto.precio * item.cantidad).toLocaleString()}\n`; });
-
-    return text;
-}
-
 function filtrarProductos () {
     let filteredProducts = productos;
 
@@ -319,133 +307,3 @@ let resetFilter = document.querySelector("#resetFilter");
 conditionFilter.addEventListener("change", () => { condicion = conditionFilter.value; filtrarProductos(); });
 carreraFilter.addEventListener("change", () => { carrera = carreraFilter.value; filtrarProductos(); });
 resetFilter.addEventListener("click", () => { loadProducts(productos); condicion = ""; carrera = ""; });
-
-// ######################################################################################################################
-
-let precioTotal = 0;
-/**
- * @type {[{id:number,cantidad:number,producto:Producto}]}
- */
-function main() {
-    do {
-        opcion = parseInt(prompt(`Seleccione una opcion:
-        1. Agregar producto al carrito
-        2. Comprar productos
-        3. Mostrar carrito
-        4. Filtrar productos
-        0. Salir`));
-        switch (opcion) {
-            case 0:
-                alert("Para iniciar la compra, vuelva a cargar la pagina");
-                break;
-
-            case 1:
-                let idCantidad = []
-                do {
-                    idCantidad = promptIdCantidad();
-                } while (cargarCarrito(idCantidad));
-
-                break;
-
-            case 2:
-                if (carrito.length == 0) {
-                    alert("No hay productos en el carrito");
-                    break;
-                } else {
-                    if (confirm("¿Desea comprar los productos en el carrito?\n" + mostrarCarrito(`Su carrito contiene:\n`))) {
-                        precioTotal = comprar(carrito);
-                        if (precioTotal != -1) {
-                            alert("Gracias por su compra, a continuacion le dejamos su ticket");
-                            alert(`Comprobante Nº${Math.trunc(Math.random() * 10000)}\n\n${mostrarCarrito(`Productos comprados:\n`)}\nSu total es: $ ${precioTotal.toLocaleString()}`);
-                            carrito = [];
-                        }
-                        else {
-                            alert("No se pudo realizar la compra");
-                            if (confirm("Desea vaciar su carrito?")) {
-                                carrito = [];
-                            }
-                        }
-                    }
-                    else {
-                        if (confirm("Desea vaciar su carrito?")) {
-                            carrito = [];
-                        }
-                    }
-                    break;
-                }
-
-            case 3:
-                if (carrito.length == 0) {
-                    alert("No hay productos en el carrito");
-                    break;
-                }
-                else {
-                    alert(mostrarCarrito(`Su carrito contiene:\n`));
-                    break;
-                }
-
-            case 4:
-                do {
-                    tipoFiltro = prompt(`Seleccione una opcion:\n1. Filtrar por condicion\n2. Filtrar por carrera\n0. Volver`);
-                    switch (tipoFiltro) {
-                        case "0":
-                            break;
-
-                        case "1":
-                            filtro = prompt(`Seleccione una opcion:\n1. Nuevo\n2. Usado\n`);
-                            switch (filtro) {
-                                case "1":
-                                    filtro = "Nuevo";
-                                    break;
-                                case "2":
-                                    filtro = "Usado";
-                                    break;
-                                default:
-                                    alert("Opcion no valida, se muestran todos los productos");
-                                    break;
-                            }
-                            if (filtro != "") {
-                                alert(mostrarListaProductos(filtrarProductos(productos, tipoFiltro, filtro)));
-                            }
-                            break;
-
-                        case "2":
-                            filtro = prompt(`Seleccione una opcion:\n1. Arquitectura\n2. Economia\n3. Ingenieria\n4. Medicina\n5. Odontologia\n`);
-                            switch (filtro) {
-                                case "1":
-                                    filtro = "Arquitectura";
-                                    break;
-                                case "2":
-                                    filtro = "Economia";
-                                    break;
-                                case "3":
-                                    filtro = "Ingenieria";
-                                    break;
-                                case "4":
-                                    filtro = "Medicina";
-                                    break;
-                                case "5":
-                                    filtro = "Odontologia";
-                                    break;
-                                default:
-                                    alert("Opcion no valida, se muestran todos los productos");
-                                    break;
-                            }
-                            if (filtro != "") {
-                                alert(mostrarListaProductos(filtrarProductos(productos, tipoFiltro, filtro)));
-                            }
-                            break;
-
-                        default:
-                            alert("Opcion no valida");
-                            break;
-                    }
-                } while (tipoFiltro != "0");
-                break;
-
-            default:
-                alert("Opcion no valida");
-                break;
-        }
-    } while (opcion != 0);
-}
