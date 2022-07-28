@@ -9,6 +9,8 @@
     <link rel="shortcut icon" href="./css/FaviconNoBg.png" type="image/x-icon">
     <title>Universify - Productos</title>
     <meta name="description" content="Universify es una plataforma que te ayudará a encontrar ultiles o apuntes que te servirán en tu carrera.">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,300,1,200" />
 </head>
 
 <body>
@@ -39,8 +41,8 @@
                     <button type="reset" id="resetFilter">Borrar</button>
                 </form>
                 <form id="search-container">
-                    <input class="searchBox" type="text" id="search-field" placeholder="Busca tu producto">
-                    <button type="submit" id="search-button">Buscar</button>
+                    <input type="text" placeholder="Busca tu producto">
+                    <button type="submit">Buscar</button>
                 </form>
             </div>
         </div>
@@ -53,39 +55,43 @@
     </main>
 
     <footer>
-        <!-- <ul class="footNavList">
-            <li><a href="../index.html">Inicio</a></li>
-            <li><a href="./productos.html">Productos</a></li>
-            <li><a href="./nosotras.html">Nosotras</a></li>
-            <li><a href="./contacto.html">Contacto</a></li>
-            <li><a href="./preguntasFrecuentes.html">Preguntas&nbsp;Frecuentes</a></li>
-        </ul>
-        <div class="subscription">
-            <form action="">
-                <p>Suscribite a nuestras ofertas</p>
-                <div>
-                    <label for="email">
-                        <input type="email" type="email" placeholder="Ingresá tu correo">
-                    </label>
-                    <button type="submit">Suscribir</button>
-                </div>
-            </form>
 
-            <div class="contactIcons">
-                <a href="http://twitter.com" target="_blank"><img class="filterLight" src="../media/twitter-brands.svg" alt="twitter-logo"></a>
-                <a href="http://facebook.com" target="_blank"><img class="filterLight" src="../media/facebook-square-brands.svg" alt="facebook-logo"></a>
-                <a href="http://instagram.com" target="_blank"><img class="filterLight" src="../media/instagram-brands.svg" alt="instagram-logo"></a>
-                <a href="http://youtube.com" target="_blank"><img class="filterLight" src="../media/youtube-brands.svg" alt="youtube-logo"></a>
+        <div class="footer-container"> 
+            <div id="footer-left">
+                <a href="#productos" class="button">
+                    Volver&nbsp;hacia&nbsp;arriba<span class="material-symbols-outlined">
+                    arrow_upward</span>
+                </a>
             </div>
-        </div> -->
+            
+            <div class="subscription">
+                <form id="subscription-form">
+                    <p>Suscribite a nuestras ofertas</p>
+                    <div id="subscription-input">
+                        <label for="email">
+                            <input type="email" type="email" placeholder="Ingresá tu correo">
+                        </label>
+                        <button type="button">Suscribir</button>
+                    </div>
+                </form>
+                
+                <div class="contact-icons">
+                    <a href="http://twitter.com" target="_blank"><img src="../media/twitter-brands.svg" alt="twitter-logo"></a>
+                    <a href="http://facebook.com" target="_blank"><img src="../media/facebook-square-brands.svg" alt="facebook-logo"></a>
+                    <a href="http://instagram.com" target="_blank"><img  src="../media/instagram-brands.svg" alt="instagram-logo"></a>
+                    <a href="http://youtube.com" target="_blank"><img src="../media/youtube-brands.svg" alt="youtube-logo"></a>
+                </div>
+                
+            </div>
+            
+            <div class="spacer"></div>
 
-        <a href="#productos" class="button"><button>Volver&nbsp;hacia&nbsp;arriba<img class="filterDark" src="../media/arrow-up-solid.svg" alt="arrow-up-solid"></button></a>
-
-        <!-- buy floating button -->
-        <button id="carrito-button" class="hidden">
-            Comprar
-            <p>Total: $0</p>
-        </button>
+            <!-- buy floating button -->
+            <button id="carrito-button" class="hidden">
+                Comprar
+                <p>Total: $0</p>
+            </button>
+        </div>
         
     </footer>
 
