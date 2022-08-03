@@ -41,10 +41,28 @@ const productos = [
     new Producto(12, "Matematica", 14980, 1, "Economia", "Usado", "./media/matematica.jpg")
 ]
 
+// Decaracion de variables globales
 let carrito = [];
-
-
 const imgGrid = document.querySelector("#img-grid");
+let totalButton = document.querySelector("#total-button");
+let carritoCloseButton = document.querySelector("#carrito-close-button");
+let carrera = "";
+let condicion = "";
+let conditionFilter = document.querySelector("#condicion");
+let carreraFilter = document.querySelector("#carrera");
+let resetFilter = document.querySelector("#resetFilter");
+let buyButton = document.querySelector("#buy-button");
+let body = document.querySelector("body");
+
+// Asignacion de eventos
+totalButton.addEventListener("click", () => { toggleCarrito() });
+carritoCloseButton.addEventListener("click", () => { toggleCarrito() });
+conditionFilter.addEventListener("change", () => { condicion = conditionFilter.value; filtrarProductos(); });
+carreraFilter.addEventListener("change", () => { carrera = carreraFilter.value; filtrarProductos(); });
+resetFilter.addEventListener("click", () => { loadProducts(productos); condicion = ""; carrera = ""; });
+buyButton.addEventListener("click", () => { comprar(); });
+
+
 
 /**
  * Crea el html para mostrar los productos en la pagina
@@ -99,7 +117,7 @@ function loadProducts (array) {
                 if (selector.valueAsNumber > 0) {
                     figure.classList.add("in-cart");
                 }
-                updateCarritoButton();
+                updateTotalButton();
             });
             // Actualiza la class de la figura para que se muestre el border de color verde
             if (selector.valueAsNumber > 0) {
@@ -117,7 +135,7 @@ function loadProducts (array) {
                 if (selector.valueAsNumber === 0) {
                     figure.classList.remove("in-cart");
                 }
-                updateCarritoButton();
+                updateTotalButton();
             });
             // Actualiza la class de la figura para que se no muestre el border de color verde
             if (selector.valueAsNumber === 0) {
@@ -179,8 +197,9 @@ function comprar() {
     alert(`Compra realizada con exito`);
     carrito = [];
     filtrarProductos();
-    updateCarritoButton();
-    return;
+    updateTotalButton();
+    toggleCarrito();
+    toggleTotalButton();
 }
 
 /**
@@ -204,6 +223,14 @@ function cargarCarrito(id, cantidad) {
 
     // Busco el producto en el carrito para ver si ya existe
     let found = carrito.find(item => item.producto.id === seleccion.producto.id);
+
+    // Si la cantidad es 0, quiere decir que se quiere quitar el producto del carrito
+    if (seleccion.cantidad === 0) {
+        // Si el producto existe, lo elimino del carrito
+        if (found) {
+            carrito.splice(carrito.indexOf(found), 1);
+        }
+    }
 
     // Si la cantidad es menor a 0, muestro un mensaje de error (esto quedo viejo ya que se previenen estos casos desde el html)
     if (cantidad < 0) {
@@ -245,16 +272,11 @@ function cargarCarrito(id, cantidad) {
     return cantidad;
 }
 
-// Guardo el boton de comprar en una variable para poder llamarlo desde cualquier parte de la pagina
-let carritoButton = document.querySelector("#carrito-button");
-// Agrego el evento click al boton de comprar llamando a la funcion comprar
-carritoButton.addEventListener("click", () => { comprar() });
-
 /**
  * Actualiza el contenido del boton de carrito para que se muestre el precio total del carrito
  */
-function updateCarritoButton() {
-    let carritoButtonText = document.querySelector("#carrito-button p");
+function updateTotalButton() {
+    let carritoButtonText = totalButton.querySelector("p");
     
     // Hago una suma de todos los precios del carrito
     let total = 0;
@@ -264,15 +286,56 @@ function updateCarritoButton() {
     
     // Muestro el precio total en el boton de carrito si hay productos en el carrito
     if (total > 0) {
-        carritoButton.classList.remove("hidden");
+        totalButton.classList.remove("hidden");
         carritoButtonText.innerHTML = `Total: $${total.toLocaleString()}`;
     }
     
     // Si el carrito esta vacio, oculto el boton
-    if (total === 0) {
-        carritoButton.classList.add("hidden");
+    if (total === 0 || carrito.length === 0) {
+        totalButton.classList.add("hidden");
     }
     
+}
+
+function toggleTotalButton() {
+    totalButton.classList.toggle("hidden");
+}
+
+function updateCarrito() {
+    // Actualizo el contenido del carrito
+    let carritoBody = document.querySelector("#carrito-body");
+    carritoBody.innerHTML = "";
+    for (const item of carrito) {
+        let carritoItem = document.createElement("figure");
+        carritoItem.className = "carrito-product";
+        carritoItem.innerHTML = `
+            <div class="carrito-product-image">
+                <img class="carrito-product-image" src="${item.producto.imagen}" alt="${item.producto.nombre}">
+                <h4>${item.producto.nombre}</h4>
+            </div>
+            <figcaption class="carrito-product-info">
+                <p>Cantidad: ${item.cantidad}</p>
+                <p>$${(item.producto.precio * item.cantidad).toLocaleString()}</p>
+            </figcaption>
+        `;
+        carritoBody.appendChild(carritoItem);
+    }
+    if (carrito.length === 0) {
+        carritoBody.innerHTML = `<p>No hay productos en el carrito</p>`;
+    }
+}
+
+function toggleCarrito() {
+    updateCarrito();
+    toggleTotalButton();
+    let carritoContainer = document.querySelector("#carrito-container");
+    carritoContainer.classList.toggle("hidden");
+
+    if (!carritoContainer.classList.contains("hidden")) {
+        body.style.overflow = "hidden";
+    } else {
+        body.style.overflow = "auto";
+    }
 }
 
 /**
@@ -297,13 +360,3 @@ function filtrarProductos () {
         
     loadProducts(filteredProducts);
 }
-
-let carrera = "";
-let condicion = "";
-
-let conditionFilter = document.querySelector("#condicion");
-let carreraFilter = document.querySelector("#carrera");
-let resetFilter = document.querySelector("#resetFilter");
-conditionFilter.addEventListener("change", () => { condicion = conditionFilter.value; filtrarProductos(); });
-carreraFilter.addEventListener("change", () => { carrera = carreraFilter.value; filtrarProductos(); });
-resetFilter.addEventListener("click", () => { loadProducts(productos); condicion = ""; carrera = ""; });

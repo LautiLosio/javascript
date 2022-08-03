@@ -15,10 +15,24 @@
 
 <body>
     <main>
+        <div id="carrito-container" class="hidden">
+            <div id="carrito">
+                <span class="material-symbols-outlined" id="carrito-close-button">close</span>
+                <div id="carrito-header">
+                    <h2>Carrito</h2>
+                </div>
+                <div id="carrito-body">
+                    <!-- Esto se carga dinamicamente -->
+                </div>
+                <button id="buy-button">Comprar ahora</button>
+            </div>
+        </div>
+
         <div class="header" id="productos">
             <h2>Productos</h2>
             <h3>Filtrá por carrea y condición</h3>
         </div>
+
         <div class="search-header">
             <p>¡Buscá entre miles de productos subidos por estudiantes como vos!</p>
             <div id="filters-container">
@@ -87,9 +101,14 @@
             <div class="spacer"></div>
 
             <!-- buy floating button -->
-            <button id="carrito-button" class="hidden">
-                Comprar
-                <p>Total: $0</p>
+            <button id="total-button" class="hidden">
+                <span class="material-symbols-outlined">
+                    shopping_cart
+                </span>
+                <div>
+                    <p>Total: $0</p>
+                    Ver carrito
+                </div>
             </button>
         </div>
 
