@@ -368,6 +368,7 @@ function loadCarrito() {
 function clearCarrito() {
     carrito = [];
     updateCarrito();
+    updateTotalButton();
     loadProducts(productos);
 }
 
