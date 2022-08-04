@@ -5,19 +5,21 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@40,300,1,200" />
     <link rel="stylesheet" href="./css/style.css">
     <link rel="shortcut icon" href="./css/FaviconNoBg.png" type="image/x-icon">
     <title>Universify - Productos</title>
     <meta name="description" content="Universify es una plataforma que te ayudará a encontrar ultiles o apuntes que te servirán en tu carrera.">
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,300,1,200" />
 </head>
 
 <body>
     <main>
         <div id="carrito-container" class="hidden">
             <div id="carrito">
-                <span class="material-symbols-outlined" id="carrito-close-button">close</span>
+                <div id="carrito-menu-bar">
+                    <span class="material-symbols-sharp" id="carrito-close-button">close</span>
+                </div>
                 <div id="carrito-header">
                     <h2>Carrito</h2>
                 </div>
@@ -25,6 +27,26 @@
                     <!-- Esto se carga dinamicamente -->
                 </div>
                 <button id="buy-button">Comprar ahora</button>
+                <div id="carrito-localStorage">
+                    <div class="carrito-localStorage-button" id="save-carrito-button">
+                        <span class="material-symbols-sharp">
+                            download_for_offline
+                        </span>
+                        <p>Guardar</p>
+                    </div>
+                    <div class="carrito-localStorage-button" id="load-carrito-button">
+                        <span class="material-symbols-sharp">
+                            sync
+                        </span>
+                        <p>Recuperar</p>
+                    </div>
+                    <div class="carrito-localStorage-button" id="clear-carrito-button">
+                        <span class="material-symbols-sharp">
+                            delete_forever
+                        </span>
+                        <p>Borrar</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -60,8 +82,8 @@
                 </form>
             </div>
         </div>
-        <section class="product-grid">
 
+        <section class="product-grid">
             <div id="img-grid">
                 <!-- Los productos se cargan dinamicamente -->
             </div>
@@ -73,7 +95,7 @@
         <div class="footer-container">
             <div id="footer-left">
                 <a href="#productos" class="button">
-                    Volver&nbsp;hacia&nbsp;arriba<span class="material-symbols-outlined">
+                    Volver&nbsp;hacia&nbsp;arriba<span class="material-symbols-sharp">
                     arrow_upward</span>
                 </a>
             </div>
@@ -101,13 +123,13 @@
             <div class="spacer"></div>
 
             <!-- buy floating button -->
-            <button id="total-button" class="hidden">
-                <span class="material-symbols-outlined">
+            <button id="total-button">
+                <span class="material-symbols-sharp">
                     shopping_cart
                 </span>
                 <div>
-                    <p>Total: $0</p>
-                    Ver carrito
+                    <p class="hidden-text">Total: $0</p>
+                    <h4>Mostrar carrito</h4>
                 </div>
             </button>
         </div>
