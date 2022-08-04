@@ -297,6 +297,7 @@
 }
 
 .in-cart {
+    transition: all 0.3s ease;
     box-shadow: 0 0 0 8px #d7e56c !important;
 }
 
