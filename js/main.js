@@ -102,11 +102,7 @@ function loadProducts (array) {
             // Cargo el valor del selector con la cantidad de productos disponibles
             if (carrito.length > 0) {
                 let found = carrito.find(item => item.producto.id === array[i].id);
-                if (found) {
-                    selector.value = found.cantidad;
-                } else {
-                    selector.value = 0;
-                }
+                found ? selector.value = found.cantidad : selector.value = 0;
             } else {
                 selector.value = 0;
             }
@@ -119,15 +115,11 @@ function loadProducts (array) {
             plus.addEventListener("click", () => { 
                 selector.stepUp(1);
                 selector.value = cargarCarrito(item.id,selector.valueAsNumber);
-                if (selector.valueAsNumber > 0) {
-                    figure.classList.add("in-cart");
-                }
+                selector.valueAsNumber > 0 && figure.classList.add("in-cart");
                 updateTotalButton();
             });
-            // Actualiza la class de la figura para que se muestre el border de color verde
-            if (selector.valueAsNumber > 0) {
-                figure.classList.add("in-cart");
-            }
+            // Actualiza la class de la figura para que se no muestre el border de color verde
+            selector.valueAsNumber > 0 && figure.classList.add("in-cart");
             
             // Creo el boton de quitar del carrito
             let minus = document.createElement("button");
@@ -137,22 +129,16 @@ function loadProducts (array) {
             minus.addEventListener("click", () => { 
                 selector.stepDown(1);
                 selector.value = cargarCarrito(item.id,selector.valueAsNumber);
-                if (selector.valueAsNumber === 0) {
-                    figure.classList.remove("in-cart");
-                }
+                selector.valueAsNumber === 0 && figure.classList.remove("in-cart");
                 updateTotalButton();
             });
             // Actualiza la class de la figura para que se no muestre el border de color verde
-            if (selector.valueAsNumber === 0) {
-                figure.classList.remove("in-cart");
-            }
-
+            selector.valueAsNumber === 0 && figure.classList.remove("in-cart");
+        
             // Cargo la imagen del producto en el html
             img.src = item.imagen;
-            // Agrega la clase "out-of-stock" a la figura si el stock es 0
-            if (item.cantidad == 0) {
-                figure.classList.add("out-of-stock");
-            }
+            item.cantidad == 0 && figure.classList.add("out-of-stock");
+
             price.innerHTML = `$${item.precio.toLocaleString()}`;
             name.innerHTML = item.nombre;
 
@@ -191,9 +177,8 @@ loadProducts(productos);
  */
 function comprar() {
     // Si el carrito esta vacio, muestro un mensaje al usuario
-    if (carrito.length === 0) {
-        alert("No hay productos en el carrito");
-    }
+    carrito.length === 0 && alert("No hay productos en el carrito");
+
     for (const item of carrito) {
         if (item.producto.disponible(item.cantidad)) {
             item.producto.buy(item.cantidad);
@@ -227,42 +212,21 @@ function cargarCarrito(id, cantidad) {
     let seleccion = {
         id: id,
         cantidad: cantidad,
-        producto: productos.find(producto => producto.id == id),
-    }
+        producto: productos.find(producto => producto.id == id)
+    };
 
     // Busco el producto en el carrito para ver si ya existe
     let found = carrito.find(item => item.producto.id === seleccion.producto.id);
 
     // Si la cantidad es 0, quiere decir que se quiere quitar el producto del carrito
-    if (seleccion.cantidad === 0) {
-        // Si el producto existe, lo elimino del carrito
-        if (found) {
-            carrito.splice(carrito.indexOf(found), 1);
-        } else {
-            // Si el producto no existe, salgo
-            return 0;
-        }
-    }
+    seleccion.cantidad === 0 ? (found ? carrito.splice(carrito.indexOf(found), 1) : 0) : null;
+
 
     // Si la cantidad es menor a 0, muestro un mensaje de error (esto quedo viejo ya que se previenen estos casos desde el html)
-    if (cantidad < 0) {
-        alert("La cantidad debe ser mayor a 0");
-        if (found) {
-            return found.cantidad;
-        } else {
-            return 0;
-        }
-    }
+    cantidad < 0 ? alert("La cantidad debe ser mayor a 0") ( found ? found.cantidad : 0 ) : null; 
 
     // Si la cantidad que se quiere comprar es mayor a la cantidad disponible, muestro un mensaje de error (esto tambien quedo deprecado)
-    if (cantidad > seleccion.producto.cantidad) {
-        alert(`El producto ${seleccion.producto.nombre} no tiene suficientes unidades`);
-        if (found) {
-            return found.cantidad;
-        } else {
-            return 0;
-        }
-    }
+    cantidad > seleccion.producto.cantidad ? alert(`El producto ${seleccion.producto.nombre} no tiene suficientes unidades`) ( found ? found.cantidad : 0 ) : null;
     
     // Si el producto ya existe en el carrito, solo actualizo la cantidad
     if (found) {
@@ -332,9 +296,7 @@ function updateCarrito() {
         `;
         carritoBody.appendChild(carritoItem);
     }
-    if (carrito.length === 0) {
-        carritoBody.innerHTML = `<p>No hay productos en el carrito</p>`;
-    }
+    carrito.length === 0 && (carritoBody.innerHTML = `<p>No hay productos en el carrito</p>`);
 }
 
 function toggleCarrito() {
@@ -342,12 +304,7 @@ function toggleCarrito() {
     toggleTotalButton();
     let carritoContainer = document.querySelector("#carrito-container");
     carritoContainer.classList.toggle("hidden");
-
-    if (!carritoContainer.classList.contains("hidden")) {
-        body.style.overflow = "hidden";
-    } else {
-        body.style.overflow = "auto";
-    }
+    !carritoContainer.classList.contains("hidden") ? body.style.overflow = "hidden" : body.style.overflow = "auto";
 }
 
 function saveCarrito() {
@@ -380,15 +337,11 @@ function filtrarProductos () {
 
     if (carrera != "") {
         filteredProducts = filteredProducts.filter(producto => producto.carrera == carrera);
-        if (condicion != "") {
-            filteredProducts = filteredProducts.filter(producto => producto.condicion == condicion);
-        }
+        condicion != "" && filteredProducts.filter(producto => producto.condicion == condicion);
     } else {
         if (condicion != "") {
             filteredProducts = filteredProducts.filter(producto => producto.condicion == condicion);
-            if (carrera != "") {
-                filteredProducts = filteredProducts.filter(producto => producto.carrera == carrera);
-            }
+            carrera != "" && filteredProducts.filter(producto => producto.carrera == carrera);
         }
     }
         
