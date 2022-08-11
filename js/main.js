@@ -177,14 +177,55 @@ loadProducts(productos);
  */
 function comprar() {
     // Si el carrito esta vacio, muestro un mensaje al usuario
-    carrito.length === 0 && alert("No hay productos en el carrito");
+    carrito.length === 0 && Toastify({
+        text: "No hay productos en el carrito",
+        duration: 3000,
+        gravity: "top",
+        position: "center",
+        stopOnFocus: true,
+        style: {
+            background: "#f44336",
+            fontSize: "1.2rem",
+            fontWeight: "bold",
+            textAlign: "center",
+            margin: ".5rem",
+        }
+    }).showToast();
+        
 
     for (const item of carrito) {
         if (item.producto.disponible(item.cantidad)) {
             item.producto.buy(item.cantidad);
-            alert(`Compra realizada con exito`);
+            Toastify({
+                text: "Compra realizada con exito!",
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                stopOnFocus: true,
+                style: {
+                    background: "#d7e56c",
+                    color: "black",
+                    fontSize: "1.2rem",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    margin: ".5rem",
+                }
+            }).showToast();
         } else {
-            alert(`El producto ${item.producto.nombre} no tiene suficientes unidades`);
+            Toastify({
+                text: `El producto ${item.producto.nombre} no tiene suficientes unidades`,
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                stopOnFocus: true,
+                style: {
+                    background: "#f44336",
+                    fontSize: "1.2rem",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    margin: ".5rem",
+                }
+            }).showToast();
             return;
         }
     }
@@ -223,17 +264,57 @@ function cargarCarrito(id, cantidad) {
 
 
     // Si la cantidad es menor a 0, muestro un mensaje de error (esto quedo viejo ya que se previenen estos casos desde el html)
-    cantidad < 0 ? alert("La cantidad debe ser mayor a 0") ( found ? found.cantidad : 0 ) : null; 
+    cantidad < 0 ? Toastify ({
+        text: "La cantidad debe ser mayor a 0",
+        duration: 3000,
+        gravity: "top",
+        position: "center",
+        stopOnFocus: true,
+        style: {
+            background: "#f44336",
+            fontSize: "1.2rem",
+            fontWeight: "bold",
+            textAlign: "center",
+            margin: ".5rem",
+        }
+    }).showToast()
+    ( found ? found.cantidad : 0 ) : null; 
 
     // Si la cantidad que se quiere comprar es mayor a la cantidad disponible, muestro un mensaje de error (esto tambien quedo deprecado)
-    cantidad > seleccion.producto.cantidad ? alert(`El producto ${seleccion.producto.nombre} no tiene suficientes unidades`) ( found ? found.cantidad : 0 ) : null;
+    cantidad > seleccion.producto.cantidad ? Toastify ({
+        text: `El producto ${seleccion.producto.nombre} no tiene suficientes unidades`,
+        duration: 3000,
+        gravity: "top",
+        position: "center",
+        stopOnFocus: true,
+        style: {
+            background: "#f44336",
+            fontSize: "1.2rem",
+            fontWeight: "bold",
+            textAlign: "center",
+            margin: ".5rem",
+        }
+    }).showToast() ( found ? found.cantidad : 0 ) : null;
     
     // Si el producto ya existe en el carrito, solo actualizo la cantidad
     if (found) {
         if (productos.find(item => item.id === id).cantidad >= cantidad) {
             found.cantidad = cantidad;
         } else {
-            alert(`No puedes cargar mas de ${seleccion.producto.cantidad} unidades de ${seleccion.producto.nombre}.\nYa tienes ${found.cantidad}`);
+            Toastify ({
+                text: `No puedes cargar mas de ${seleccion.producto.cantidad} unidades de ${seleccion.producto.nombre}.\nYa tienes ${found.cantidad}`,
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                stopOnFocus: true,
+                style: {
+                    background: "#f44336",
+                    fontSize: "1.2rem",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    margin: ".5rem",
+                }
+            }).showToast()
             if (found) {
                 return found.cantidad;
             } else {
