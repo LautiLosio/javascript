@@ -1,0 +1,110 @@
+[
+    {
+        "id": 1,
+        "nombre": "Tablero",
+        "precio": 38150,
+        "cantidad": 5,
+        "carrera": "Arquitectura",
+        "condicion": "Nuevo",
+        "imagen": "./media/tablero.jpg"
+    },
+    {
+        "id": 2,
+        "nombre": "Craneo",
+        "precio": 45134,
+        "cantidad": 5,
+        "carrera": "Odontologia",
+        "condicion": "Nuevo",
+        "imagen": "./media/craneo.jpg"
+    },
+    {
+        "id": 3,
+        "nombre": "Escuadras",
+        "precio": 4280,
+        "cantidad": 10,
+        "carrera": "Ingenieria",
+        "condicion": "Nuevo",
+        "imagen": "./media/escuadras.jpg"
+    },
+    {
+        "id": 4,
+        "nombre": "Ambo",
+        "precio": 3210,
+        "cantidad": 20,
+        "carrera": "Medicina",
+        "condicion": "Nuevo",
+        "imagen": "./media/ambo.jpg"
+    },
+    {
+        "id": 5,
+        "nombre": "Calculadora",
+        "precio": 10700,
+        "cantidad": 1,
+        "carrera": "Ingenieria",
+        "condicion": "Usado",
+        "imagen": "./media/calculadora.jpg"
+    },
+    {
+        "id": 6,
+        "nombre": "Kit",
+        "precio": 6420,
+        "cantidad": 1,
+        "carrera": "Medicina",
+        "condicion": "Usado",
+        "imagen": "./media/kit.jpg"
+    },
+    {
+        "id": 7,
+        "nombre": "Apuntes",
+        "precio": 2200,
+        "cantidad": 1,
+        "carrera": "Ingenieria",
+        "condicion": "Usado",
+        "imagen": "./media/apuntes.jpg"
+    },
+    {
+        "id": 8,
+        "nombre": "Huesos",
+        "precio": 9500,
+        "cantidad": 1,
+        "carrera": "Medicina",
+        "condicion": "Usado",
+        "imagen": "./media/huesos.jpg"
+    },
+    {
+        "id": 9,
+        "nombre": "Estetoscopios",
+        "precio": 12500,
+        "cantidad": 5,
+        "carrera": "Medicina",
+        "condicion": "Nuevo",
+        "imagen": "./media/estetoscopio.jpg"
+    },
+    {
+        "id": 10,
+        "nombre": "Microeconomia",
+        "precio": 5350,
+        "cantidad": 1,
+        "carrera": "Economia",
+        "condicion": "Usado",
+        "imagen": "./media/microeconomia.jpg"
+    },
+    {
+        "id": 11,
+        "nombre": "Libro",
+        "precio": 5900,
+        "cantidad": 1,
+        "carrera": "Economia",
+        "condicion": "Usado",
+        "imagen": "./media/libro_moneda.jpg"
+    },
+    {
+        "id": 12,
+        "nombre": "Matematica",
+        "precio": 14980,
+        "cantidad": 1,
+        "carrera": "Economia",
+        "condicion": "Usado",
+        "imagen": "./media/matematica.jpg"
+    }
+]

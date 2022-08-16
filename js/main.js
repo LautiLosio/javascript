@@ -22,24 +22,20 @@ class Producto {
     }
 }
 
-// Productos
-/**
- * @type {Producto[]}
- */
-const productos = [
-    new Producto(1, "Tablero", 38150, 5, "Arquitectura", "Nuevo", "./media/tablero.jpg"),
-    new Producto(2, "Craneo", 45134, 5, "Odontologia", "Nuevo", "./media/craneo.jpg"),
-    new Producto(3, "Escuadras", 4280, 10, "Ingenieria", "Nuevo", "./media/escuadras.jpg"),
-    new Producto(4, "Ambo", 3210, 20, "Medicina", "Nuevo", "./media/ambo.jpg"),
-    new Producto(5, "Calculadora", 10700, 1, "Ingenieria", "Usado", "./media/calculadora.jpg"),
-    new Producto(6, "Kit", 6420, 1, "Medicina", "Usado", "./media/kit.jpg"),
-    new Producto(7, "Apuntes", 2200, 1, "Ingenieria", "Usado", "./media/apuntes.jpg"),
-    new Producto(8, "Huesos", 9500, 1, "Medicina", "Usado", "./media/huesos.jpg"),
-    new Producto(9, "Estetoscopios", 12500, 5, "Medicina", "Nuevo", "./media/estetoscopio.jpg"),
-    new Producto(10, "Microeconomia", 5350, 1, "Economia", "Usado", "./media/microeconomia.jpg"),
-    new Producto(11, "Libro", 5900, 1, "Economia", "Usado", "./media/libro_moneda.jpg"),
-    new Producto(12, "Matematica", 14980, 1, "Economia", "Usado", "./media/matematica.jpg")
-]
+// Carga de productos haciendo fetch con un archivo local
+async function fetchProducts() {
+    const response = await fetch('./js/data.json');
+    const data = await response.json();
+    return data;
+}
+
+const productos = [];
+
+const productData = fetchProducts().then(data => { 
+    for (const product of data) {
+        productos.push(new Producto(product.id, product.nombre, product.precio, product.cantidad, product.carrera, product.condicion, product.imagen));
+    }
+ }).then(() => {loadProducts(productos)});
 
 // Decaracion de variables globales
 let carrito = [];
@@ -167,9 +163,6 @@ function loadProducts (array) {
     }
 }
 
-// Carga inicial de todos los productos
-loadProducts(productos);
-
 /**
  * Realiza la compra de todos los productos del carrito
  * 
@@ -260,29 +253,15 @@ function cargarCarrito(id, cantidad) {
     let found = carrito.find(item => item.producto.id === seleccion.producto.id);
 
     // Si la cantidad es 0, quiere decir que se quiere quitar el producto del carrito
-    seleccion.cantidad === 0 ? (found ? carrito.splice(carrito.indexOf(found), 1) : 0) : null;
-
-
-    // Si la cantidad es menor a 0, muestro un mensaje de error (esto quedo viejo ya que se previenen estos casos desde el html)
-    cantidad < 0 ? Toastify ({
-        text: "La cantidad debe ser mayor a 0",
-        duration: 3000,
-        gravity: "top",
-        position: "center",
-        stopOnFocus: true,
-        style: {
-            background: "#f44336",
-            fontSize: "1.2rem",
-            fontWeight: "bold",
-            textAlign: "center",
-            margin: ".5rem",
-        }
-    }).showToast()
-    ( found ? found.cantidad : 0 ) : null; 
+    if (cantidad <= 0) {
+        carrito.splice(carrito.indexOf(found), 1);
+        updateTotalButton();
+        return 0;
+    }
 
     // Si la cantidad que se quiere comprar es mayor a la cantidad disponible, muestro un mensaje de error (esto tambien quedo deprecado)
     cantidad > seleccion.producto.cantidad ? Toastify ({
-        text: `El producto ${seleccion.producto.nombre} no tiene suficientes unidades`,
+        text: `El producto "${seleccion.producto.nombre}" ya no tiene suficientes unidades`,
         duration: 3000,
         gravity: "top",
         position: "center",
@@ -400,7 +379,7 @@ function loadCarrito() {
         }
     }
     updateCarrito();
-    loadProducts(productos);
+    filtrarProductos();
 }
 
 function clearCarrito() {
@@ -418,13 +397,20 @@ function filtrarProductos () {
 
     if (carrera != "") {
         filteredProducts = filteredProducts.filter(producto => producto.carrera == carrera);
-        condicion != "" && filteredProducts.filter(producto => producto.condicion == condicion);
+        if (condicion != "") {
+            filteredProducts = filteredProducts.filter(producto => producto.condicion == condicion);
+        }
+        // condicion != "" && filteredProducts.filter(producto => producto.condicion == condicion);
     } else {
         if (condicion != "") {
             filteredProducts = filteredProducts.filter(producto => producto.condicion == condicion);
-            carrera != "" && filteredProducts.filter(producto => producto.carrera == carrera);
+            if (carrera != "") {
+                filteredProducts = filteredProducts.filter(producto => producto.carrera == carrera);
+            }
+            // carrera != "" && filteredProducts.filter(producto => producto.carrera == carrera);
         }
     }
-        
+    
+    console.log(filteredProducts);
     loadProducts(filteredProducts);
 }
