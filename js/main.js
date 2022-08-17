@@ -22,20 +22,19 @@ class Producto {
     }
 }
 
+const productos = [];
+
 // Carga de productos haciendo fetch con un archivo local
 async function fetchProducts() {
     const response = await fetch('./js/data.json');
     const data = await response.json();
-    return data;
-}
-
-const productos = [];
-
-const productData = fetchProducts().then(data => { 
     for (const product of data) {
         productos.push(new Producto(product.id, product.nombre, product.precio, product.cantidad, product.carrera, product.condicion, product.imagen));
     }
- }).then(() => {loadProducts(productos)});
+    loadProducts(productos);
+}
+
+fetchProducts();
 
 // Decaracion de variables globales
 let carrito = [];
@@ -181,7 +180,6 @@ function comprar() {
             fontSize: "1.2rem",
             fontWeight: "bold",
             textAlign: "center",
-            margin: ".5rem",
         }
     }).showToast();
         
@@ -201,7 +199,6 @@ function comprar() {
                     fontSize: "1.2rem",
                     fontWeight: "bold",
                     textAlign: "center",
-                    margin: ".5rem",
                 }
             }).showToast();
         } else {
@@ -216,7 +213,6 @@ function comprar() {
                     fontSize: "1.2rem",
                     fontWeight: "bold",
                     textAlign: "center",
-                    margin: ".5rem",
                 }
             }).showToast();
             return;
@@ -271,7 +267,6 @@ function cargarCarrito(id, cantidad) {
             fontSize: "1.2rem",
             fontWeight: "bold",
             textAlign: "center",
-            margin: ".5rem",
         }
     }).showToast() ( found ? found.cantidad : 0 ) : null;
     
@@ -291,7 +286,6 @@ function cargarCarrito(id, cantidad) {
                     fontSize: "1.2rem",
                     fontWeight: "bold",
                     textAlign: "center",
-                    margin: ".5rem",
                 }
             }).showToast()
             if (found) {
@@ -411,6 +405,5 @@ function filtrarProductos () {
         }
     }
     
-    console.log(filteredProducts);
     loadProducts(filteredProducts);
 }
