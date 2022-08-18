@@ -365,6 +365,7 @@ function updateTotalButton() {
 
 function toggleTotalButton() {
     totalButton.classList.toggle("hidden");
+    updateTotalButton();
 }
 
 function updateCarrito() {
