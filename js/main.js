@@ -1,39 +1,62 @@
 class Producto {
-    constructor(id, nombre, precio, cantidad, carrera, condicion, imagen) {
+    constructor(id, title, price, available, category, rating, image) {
         this.id = id;
-        this.nombre = nombre;
-        this.precio = precio;
-        this.cantidad = cantidad;
-        this.carrera = carrera;
-        this.condicion = condicion;
-        this.imagen = imagen;
+        this.title = title;
+        this.price = price;
+        this.available = available;
+        this.category = category;
+        this.rating = rating;
+        this.image = image;
     }
 
     buy(amount) {
-        this.cantidad -= amount;
+        this.available -= amount;
     }
 
     disponible(amount) {
-        return this.cantidad >= amount;
+        return this.available >= amount;
     }
 
     toString() {
-        return ` ${this.id}   |   ${this.nombre}   |   $ ${this.precio.toLocaleString()}   |   ${this.cantidad}   |   ${this.carrera}   |   ${this.condicion} \n`;
+        return ` ${this.id}   |   ${this.title}   |   $ ${this.price.toLocaleString()}   |   ${this.available}   |   ${this.category}   |   ${this.rating} \n`;
     }
 }
 
 const productos = [];
 
-// Carga de productos haciendo fetch con un archivo local
-async function fetchProducts(amount) {
+/**
+ * Obtiene los productos desde la API y los agrega a la lista de productos
+ * @fetch https://fakestoreapi.com/products
+ */
+async function fetchProducts() {
     const response = await fetch('https://fakestoreapi.com/products');
-    // const response = await fetch('./js/data.json');
+    const dolarHoy = await getDolarPrice();
+
     const data = await response.json();
     for (const product of data) {
-        productos.push(new Producto(product.id, product.title, product.price, Math.trunc(Math.random() * 20) + 1, product.category, product.rating.rate, product.image));
+        productos.push(new Producto(product.id, product.title, product.price * dolarHoy, Math.trunc(Math.random() * 20) + 1, product.category, product.rating.rate, product.image));
         // La cantidad de productos a cargar es aleatoria entre 1 y 20 ya que la API no tiene una cantidad de productos como parametro
+        // El precio de los productos es el precio de la API multiplicado por el dolar de hoy (dolarHoy) porque la API maneja los precios en dolares, y ademas porque me parecio cool
     }
     loadProducts(productos);
+}
+
+
+/**
+ * Consulta la API para obtener el precio del dolar de hoy
+ * @api https://api.exchangeratesapi.io/latest?base=USD 
+ * @returns {number} el precio del dolar de hoy
+ */
+async function getDolarPrice() {
+    const response = await fetch('https://cors-solucion.herokuapp.com/https://api-dolar-argentina.herokuapp.com/api/dolarblue');
+    const data = await response.json();
+
+    let compra = parseFloat(data.compra);
+    let venta = parseFloat(data.venta);
+
+    dolarHoy = (compra + venta) / 2;
+
+    return dolarHoy;
 }
 
 fetchProducts();
@@ -43,10 +66,8 @@ let carrito = [];
 const imgGrid = document.querySelector("#img-grid");
 let totalButton = document.querySelector("#total-button");
 let carritoCloseButton = document.querySelector("#carrito-close-button");
-let carrera = "";
-let condicion = "";
-let conditionFilter = document.querySelector("#condicion");
-let carreraFilter = document.querySelector("#carrera");
+let ratingSelector = document.querySelector("#rating-selector");
+let categorySelector = document.querySelector("#category-selector");
 let resetFilter = document.querySelector("#resetFilter");
 let buyButton = document.querySelector("#buy-button");
 let body = document.querySelector("body");
@@ -54,18 +75,19 @@ let saveCarritoButton = document.querySelector("#save-carrito-button");
 let loadCarritoButton = document.querySelector("#load-carrito-button");
 let clearCarritoButton = document.querySelector("#clear-carrito-button");
 let showAmount = document.querySelector("#show-amount");
+let amount = showAmount.value;
 
 // Asignacion de eventos
 totalButton.addEventListener("click", () => { toggleCarrito() });
 carritoCloseButton.addEventListener("click", () => { toggleCarrito() });
-conditionFilter.addEventListener("change", () => { condicion = conditionFilter.value; filtrarProductos(); });
-carreraFilter.addEventListener("change", () => { carrera = carreraFilter.value; filtrarProductos(); });
-resetFilter.addEventListener("click", () => { loadProducts(productos); condicion = ""; carrera = ""; });
+ratingSelector.addEventListener("change", () => { rating = ratingSelector.value; filterProducts(); });
+categorySelector.addEventListener("change", () => { category = categorySelector.value; filterProducts(); });
+resetFilter.addEventListener("click", () => { loadProducts(productos); });
 buyButton.addEventListener("click", () => { comprar(); });
 saveCarritoButton.addEventListener("click", () => { saveCarrito(); });
 loadCarritoButton.addEventListener("click", () => { loadCarrito(); });
 clearCarritoButton.addEventListener("click", () => { clearCarrito(); });
-showAmount.addEventListener("change", () => { fetchProducts(showAmount.valueAsNumber); });
+showAmount.addEventListener("change", () => { amount = showAmount.value; loadProducts(productos); });
 
 
 /**
@@ -78,9 +100,9 @@ function loadProducts (array) {
     imgGrid.textContent = "";
 
     if (array.length > 0) {
-        for (let i = 0; i < array.length; i++) {
+        for (let i = 0; i < amount && i < array.length; i++) {
             // Declaro todas las variables que necesito para crear el html
-            let item = array[i];
+            let product = array[i];
             let figure = document.createElement("figure");
             let img = document.createElement("img");
             let name = document.createElement("h4");
@@ -92,16 +114,16 @@ function loadProducts (array) {
             selectorContainer.className = "selector-container";
             
             // Seteo los atributos de los elementos
-            stock.innerHTML = `Stock: ${item.cantidad}`;
+            stock.innerHTML = `Stock: ${product.available}`;
             selector.className = "selector";
             selector.type = "number";
             selector.min = "0";
-            selector.max = item.cantidad;
+            selector.max = product.available;
             selector.readOnly = true;
             // Cargo el valor del selector con la cantidad de productos disponibles
             if (carrito.length > 0) {
                 let found = carrito.find(item => item.producto.id === array[i].id);
-                found ? selector.value = found.cantidad : selector.value = 0;
+                found ? selector.value = found.available : selector.value = 0;
             } else {
                 selector.value = 0;
             }
@@ -113,7 +135,7 @@ function loadProducts (array) {
             // Agrega el producto al carrito cuando se hace click en el boton de agregar y actualiza el contenido del selector
             plus.addEventListener("click", () => { 
                 selector.stepUp(1);
-                selector.value = cargarCarrito(item.id,selector.valueAsNumber);
+                selector.value = cargarCarrito(product.id,selector.valueAsNumber);
                 selector.valueAsNumber > 0 && figure.classList.add("in-cart");
                 updateTotalButton();
             });
@@ -127,7 +149,7 @@ function loadProducts (array) {
             // Quita el producto del carrito cuando se hace click en el boton de quitar y actualiza el contenido del selector
             minus.addEventListener("click", () => { 
                 selector.stepDown(1);
-                selector.value = cargarCarrito(item.id,selector.valueAsNumber);
+                selector.value = cargarCarrito(product.id,selector.valueAsNumber);
                 selector.valueAsNumber === 0 && figure.classList.remove("in-cart");
                 updateTotalButton();
             });
@@ -135,11 +157,11 @@ function loadProducts (array) {
             selector.valueAsNumber === 0 && figure.classList.remove("in-cart");
         
             // Cargo la imagen del producto en el html
-            img.src = item.imagen;
-            item.cantidad == 0 && figure.classList.add("out-of-stock");
+            img.src = product.image;
+            product.available == 0 && figure.classList.add("out-of-stock");
 
-            price.innerHTML = `$${item.precio.toLocaleString()}`;
-            name.innerHTML = item.nombre;
+            price.innerHTML = `${product.price.toLocaleString('es-AR',{style: "currency", currency: "ARS"})} - ${product.rating.toLocaleString('en-US', {minimumFractionDigits: 1})} &starf;`;
+            name.innerHTML = product.title;
 
             // creo el html para el selector
             selectorContainer.appendChild(minus);
@@ -173,38 +195,27 @@ function loadProducts (array) {
  */
 function comprar() {
     // Si el carrito esta vacio, muestro un mensaje al usuario
-    carrito.length === 0 && Toastify({
-        text: "No hay productos en el carrito",
-        duration: 3000,
-        gravity: "top",
-        position: "center",
-        stopOnFocus: true,
-        style: {
-            background: "#f44336",
-            fontSize: "1.2rem",
-            fontWeight: "bold",
-            textAlign: "center",
-        }
-    }).showToast();
+    if (carrito.length === 0) {
+        Toastify({
+            text: "No hay productos en el carrito",
+            duration: 3000,
+            gravity: "top",
+            position: "center",
+            stopOnFocus: true,
+            style: {
+                background: "#f44336",
+                fontSize: "1.2rem",
+                fontWeight: "bold",
+                textAlign: "center",
+            }
+        }).showToast();
+        return;
+    }
         
 
     for (const item of carrito) {
         if (item.producto.disponible(item.cantidad)) {
             item.producto.buy(item.cantidad);
-            Toastify({
-                text: "Compra realizada con exito!",
-                duration: 3000,
-                gravity: "top",
-                position: "center",
-                stopOnFocus: true,
-                style: {
-                    background: "#d7e56c",
-                    color: "black",
-                    fontSize: "1.2rem",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                }
-            }).showToast();
         } else {
             Toastify({
                 text: `El producto ${item.producto.nombre} no tiene suficientes unidades`,
@@ -224,10 +235,24 @@ function comprar() {
     }
 
     clearCarrito();
-    filtrarProductos();
+    filterProducts();
     updateTotalButton();
     let carritoContainer = document.querySelector("#carrito-container");
     !carritoContainer.classList.contains("hidden") && toggleCarrito();
+    Toastify({
+        text: "Compra realizada con exito!",
+        duration: 3000,
+        gravity: "top",
+        position: "center",
+        stopOnFocus: true,
+        style: {
+            background: "#d7e56c",
+            color: "black",
+            fontSize: "1.2rem",
+            fontWeight: "bold",
+            textAlign: "center",
+        }
+    }).showToast();
 }
 
 /**
@@ -253,34 +278,41 @@ function cargarCarrito(id, cantidad) {
     let found = carrito.find(item => item.producto.id === seleccion.producto.id);
 
     // Si la cantidad es 0, quiere decir que se quiere quitar el producto del carrito
-    if (cantidad <= 0) {
+    if (found && cantidad <= 0) {
         carrito.splice(carrito.indexOf(found), 1);
         updateTotalButton();
         return 0;
     }
 
     // Si la cantidad que se quiere comprar es mayor a la cantidad disponible, muestro un mensaje de error (esto tambien quedo deprecado)
-    cantidad > seleccion.producto.cantidad ? Toastify ({
-        text: `El producto "${seleccion.producto.nombre}" ya no tiene suficientes unidades`,
-        duration: 3000,
-        gravity: "top",
-        position: "center",
-        stopOnFocus: true,
-        style: {
-            background: "#f44336",
-            fontSize: "1.2rem",
-            fontWeight: "bold",
-            textAlign: "center",
+    if (cantidad > seleccion.producto.available) {
+        Toastify ({
+            text: `El producto "${seleccion.producto.title}" ya no tiene suficientes unidades`,
+            duration: 3000,
+            gravity: "top",
+            position: "center",
+            stopOnFocus: true,
+            style: {
+                background: "#f44336",
+                fontSize: "1.2rem",
+                fontWeight: "bold",
+                textAlign: "center",
+            }
+        }).showToast()
+        if (found) {
+            return found.cantidad;
+        } else {
+            return 0;
         }
-    }).showToast() ( found ? found.cantidad : 0 ) : null;
+    }
     
     // Si el producto ya existe en el carrito, solo actualizo la cantidad
     if (found) {
-        if (productos.find(item => item.id === id).cantidad >= cantidad) {
+        if (productos.find(item => item.id === id).available >= cantidad) {
             found.cantidad = cantidad;
         } else {
             Toastify ({
-                text: `No puedes cargar mas de ${seleccion.producto.cantidad} unidades de ${seleccion.producto.nombre}.\nYa tienes ${found.cantidad}`,
+                text: `No puedes cargar más de ${seleccion.producto.available} unidades de ${seleccion.producto.title}.\nYa tienes ${found.cantidad}`,
                 duration: 3000,
                 gravity: "top",
                 position: "center",
@@ -300,7 +332,7 @@ function cargarCarrito(id, cantidad) {
         }
     } else {
         // Si el producto no existe en el carrito, lo agrego
-        carrito.push(seleccion);
+        cantidad > 0 && carrito.push(seleccion);
     }
 
     return cantidad;
@@ -315,12 +347,12 @@ function updateTotalButton() {
     // Hago una suma de todos los precios del carrito
     let total = 0;
     for (const item of carrito) {
-        total += item.producto.precio * item.cantidad;
+        total += item.producto.price * item.cantidad;
     }
     
     // Muestro el precio total en el boton de carrito si hay productos en el carrito
     if (total > 0) {
-        carritoButtonText.innerHTML = `Total: $${total.toLocaleString()}`;
+        carritoButtonText.innerHTML = `Total: ${total.toLocaleString('es-AR',{style: "currency", currency: "ARS"})}`;
         carritoButtonText.classList.remove("hidden-text");
     }
     
@@ -344,12 +376,12 @@ function updateCarrito() {
         carritoItem.className = "carrito-product";
         carritoItem.innerHTML = `
             <div class="carrito-product-image">
-                <img class="carrito-product-image" src="${item.producto.imagen}" alt="${item.producto.nombre}">
-                <h4>${item.producto.nombre}</h4>
+                <img class="carrito-product-image" src="${item.producto.image}" alt="${item.producto.title}">
+                <h4>${item.producto.title}</h4>
             </div>
             <figcaption class="carrito-product-info">
                 <p>Cantidad: ${item.cantidad}</p>
-                <p>$${(item.producto.precio * item.cantidad).toLocaleString()}</p>
+                <p>${(item.producto.price * item.cantidad).toLocaleString('es-AR',{style: "currency", currency: "ARS"})}</p>
             </figcaption>
         `;
         carritoBody.appendChild(carritoItem);
@@ -377,7 +409,7 @@ function loadCarrito() {
         }
     }
     updateCarrito();
-    filtrarProductos();
+    filterProducts();
 }
 
 function clearCarrito() {
@@ -387,27 +419,38 @@ function clearCarrito() {
     loadProducts(productos);
 }
 
-/**
- * Toma los valores de los selectores de carrera y condicion y filtra los productos disponibles, luego llama a la funcion 'loadProducts()' para actualizar el contenido de la pagina con los productos filtrados
- */
-function filtrarProductos () {
-    let filteredProducts = productos;
-
-    if (carrera != "") {
-        filteredProducts = filteredProducts.filter(producto => producto.carrera == carrera);
-        if (condicion != "") {
-            filteredProducts = filteredProducts.filter(producto => producto.condicion == condicion);
-        }
-        // condicion != "" && filteredProducts.filter(producto => producto.condicion == condicion);
-    } else {
-        if (condicion != "") {
-            filteredProducts = filteredProducts.filter(producto => producto.condicion == condicion);
-            if (carrera != "") {
-                filteredProducts = filteredProducts.filter(producto => producto.carrera == carrera);
-            }
-            // carrera != "" && filteredProducts.filter(producto => producto.carrera == carrera);
-        }
+async function getCategories() {
+    let categories = await fetch("https://fakestoreapi.com/products/categories");
+    categories = await categories.json();
+    for (const category of categories) {
+        let option = document.createElement("option");
+        option.value = category;
+        option.innerHTML = category;
+        categorySelector.appendChild(option);
     }
-    
+
+}
+
+getCategories();
+
+/**
+ * Toma los valores de los selectores de categoria y rating y filtra los productos disponibles, luego llama a la funcion 'loadProducts()' para actualizar el contenido de la pagina con los productos filtrados
+ */
+function filterProducts() {
+    let filteredProducts = productos;
+    let category = categorySelector.value;
+    let rating = ratingSelector.value;
+
+    category === "1" && (filteredProducts = productos);
+    if (category !== "" && category !== "1") {
+        filteredProducts = filteredProducts.filter(product => product.category == category);
+    }
+    if (rating !== "") {
+        filteredProducts = filteredProducts.filter(product => product.rating >= rating);
+    }
+
+    console.log(filteredProducts);
+
     loadProducts(filteredProducts);
 }
+

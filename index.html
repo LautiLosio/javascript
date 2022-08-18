@@ -54,45 +54,45 @@
         <div class="header" id="productos">
             <h2>Productos</h2>
             <h3>Filtrá por carrea y condición</h3>
-        </div>
-
-        <div class="search-header">
-            <p>¡Buscá entre miles de productos subidos por estudiantes como vos!</p>
-            <div id="filters-container">
-                <form id="product-filter">
-                    <div id="filters">
-                        <select id="carrera">
-                            <option hidden selected>Carrera</option>
-                            <option>Arquitectura</option>
-                            <option>Economia</option>
-                            <option>Ingenieria</option>
-                            <option>Medicina</option>
-                            <option>Odontologia</option>
-                        </select>
-                        <select id="condicion">
-                            <option hidden selected>Condición</option>
-                            <option>Nuevo</option>
-                            <option>Usado</option>
-                        </select>
-                    </div>
-                    <button type="reset" id="resetFilter">Borrar</button>
-                </form>
-                <!-- <form id="search-container">
-                    <input type="text" placeholder="Busca tu producto">
-                    <button type="submit">Buscar</button>
-                </form> -->
+            <div class="search-header">
+                <p>¡Buscá entre miles de productos subidos por estudiantes como vos!</p>
+                <div id="filters-container">
+                    <form id="product-filter">
+                        <div id="filters">
+                            <select id="category-selector">
+                                <option hidden selected value="">Categoría</option>
+                                <option value="1">Todos</option>
+                                <!--  se carga dinamicamente -->
+                            </select>
+                            <select id="rating-selector">
+                                <option hidden selected value="">Rating</option>
+                                <option value="0">Todos</option>
+                                <option value="3">3.0 &starf; o más</option>
+                                <option value="4">4.0 &starf; o más</option>
+                                <option value="4.5">4.5 &starf; o más</option>
+                            </select>
+    
+                        </div>
+                        <button type="reset" id="resetFilter">Borrar</button>
+                    </form>
+                    <!-- <form id="search-container">
+                        <input type="text" placeholder="Busca tu producto">
+                        <button type="submit">Buscar</button>
+                    </form> -->
+                </div>
             </div>
         </div>
+
 
         <section class="product-grid">
             <form id="show-amount-container">
                 <p>Mostrar</p>
                 <select id="show-amount">
-                    <option>3</option>
-                    <option>6</option>
-                    <option>9</option>
+                    <option>4</option>
+                    <option>8</option>
                     <option selected>12</option>
-                    <option value="">Todos</option>
+                    <option>16</option>
+                    <option value="50">Todos</option>
                 </select>
             </form>
             

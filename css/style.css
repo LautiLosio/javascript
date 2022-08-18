@@ -82,20 +82,26 @@
 .carrito-product-image {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 1rem;
-    max-width: calc(100%/2);
-
+    padding-right: 10px;
 }
 
 .carrito-product-image img {
     max-width: 50px;
 }
 
+.carrito-product-image h4 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
 .carrito-product-info {
     display: flex;
     flex-direction: column;
-    min-width: 50%;
+    min-width: 60%;
 }
 
 .carrito-product-info p {
@@ -188,6 +194,7 @@
 
 #product-filter {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: space-between;
     background-color: #ccd5ae;
@@ -209,6 +216,7 @@
 
 #filters {
     display: flex;
+    flex-direction: column;
     gap: 10px;
     background-color: #ccd5ae;
     width: 100%;
@@ -221,7 +229,10 @@
     border: 1px solid #e9edc9;
     background-color: #fff;
     font-size: 16px;
-    font-family: 'JetBrains Mono', monospace;
+}
+
+#category-selector {
+    text-transform: capitalize;
 }
 
 #filters select:active {
@@ -287,12 +298,14 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 1rem;
+    padding: 1.5rem;
     border: 2px solid #000;
     background-color: #fff;
     min-width: 250px;
+    max-width: 250px;
     align-items: center;
     overflow: visible;
+    gap: 1rem;
 }
 
 #img-grid figure img {
@@ -314,14 +327,17 @@
 
 #img-grid figure h4 {
     font-size: 1.3rem;
-    margin: 1rem;
+    text-align: center;
+    margin: 1rem 0;
     background-color: #ccd5ae;
     padding: 0.5rem 1rem;
     box-shadow: 4px 4px 0 rgb(0 0 0);
-    max-width: 250px;
-    text-overflow: ellipsis;
+    width: -webkit-fill-available;
+    max-height: 50px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
     overflow: hidden;
-    white-space: nowrap;
 }
 
 #img-grid figure h4:hover {
@@ -577,6 +593,14 @@ footer {
     #img-grid figure:hover {
         box-shadow: 5px 5px 0 #000;
         transform: translate(0, -2px);
+    }
+
+    #product-filter {
+        flex-direction: row;
+    }
+
+    #filters {
+        flex-direction: row;
     }
     
     #product-filter button:hover{
