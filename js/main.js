@@ -25,11 +25,13 @@ class Producto {
 const productos = [];
 
 // Carga de productos haciendo fetch con un archivo local
-async function fetchProducts() {
-    const response = await fetch('./js/data.json');
+async function fetchProducts(amount) {
+    const response = await fetch('https://fakestoreapi.com/products');
+    // const response = await fetch('./js/data.json');
     const data = await response.json();
     for (const product of data) {
-        productos.push(new Producto(product.id, product.nombre, product.precio, product.cantidad, product.carrera, product.condicion, product.imagen));
+        productos.push(new Producto(product.id, product.title, product.price, Math.trunc(Math.random() * 20) + 1, product.category, product.rating.rate, product.image));
+        // La cantidad de productos a cargar es aleatoria entre 1 y 20 ya que la API no tiene una cantidad de productos como parametro
     }
     loadProducts(productos);
 }
@@ -51,6 +53,7 @@ let body = document.querySelector("body");
 let saveCarritoButton = document.querySelector("#save-carrito-button");
 let loadCarritoButton = document.querySelector("#load-carrito-button");
 let clearCarritoButton = document.querySelector("#clear-carrito-button");
+let showAmount = document.querySelector("#show-amount");
 
 // Asignacion de eventos
 totalButton.addEventListener("click", () => { toggleCarrito() });
@@ -62,6 +65,7 @@ buyButton.addEventListener("click", () => { comprar(); });
 saveCarritoButton.addEventListener("click", () => { saveCarrito(); });
 loadCarritoButton.addEventListener("click", () => { loadCarrito(); });
 clearCarritoButton.addEventListener("click", () => { clearCarrito(); });
+showAmount.addEventListener("change", () => { fetchProducts(showAmount.valueAsNumber); });
 
 
 /**
