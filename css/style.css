@@ -307,19 +307,18 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 1.5rem;
+    padding: 1rem;
     border: 2px solid #000;
     background-color: #fff;
-    min-width: 250px;
-    max-width: 250px;
+    width: 220px;
     align-items: center;
     overflow: visible;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
 #img-grid figure img {
-    max-height: 200px;
-    max-width: 250px;
+    max-height: 150px;
+    max-width: 150px;
     height: auto;
     box-shadow: inset red;
 }   
@@ -335,14 +334,14 @@
 
 
 #img-grid figure h4 {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     text-align: center;
     margin: 1rem 0;
     background-color: #ccd5ae;
     padding: 0.5rem 1rem;
     box-shadow: 4px 4px 0 rgb(0 0 0);
     width: -webkit-fill-available;
-    max-height: 50px;
+    max-height: 42px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -350,7 +349,7 @@
 }
 
 #img-grid figure h4:hover {
-    line-break: loose;
+    max-height: 200px;
 }
 
 #img-grid figure h5 {
@@ -373,7 +372,7 @@
 
 .selector-container {
     display: flex;
-    margin: 1rem;
+    margin: 0.5rem;
 }
 
 .selector-container button {
@@ -408,7 +407,10 @@ input::-webkit-inner-spin-button {
 }
 
 .hidden-text {
-    display: none;
+    display: flex;
+    overflow: hidden;
+    transform: scaleX(0);
+    height: 0;
 }
 
 .no-products {
@@ -510,6 +512,7 @@ footer {
 #subscription-input {
     display: flex;
     justify-content: center;
+    align-items: center;
     flex-wrap: wrap;
     gap: 1rem;
 }

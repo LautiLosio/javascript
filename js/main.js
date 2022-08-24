@@ -76,6 +76,8 @@ let loadCarritoButton = document.querySelector("#load-carrito-button");
 let clearCarritoButton = document.querySelector("#clear-carrito-button");
 let showAmount = document.querySelector("#show-amount");
 let amount = showAmount.value;
+let subscribeEmail = document.querySelector("#subscribe-email");
+let subscribeButton = document.querySelector("#subscribe-button");
 
 // Asignacion de eventos
 totalButton.addEventListener("click", () => { toggleCarrito() });
@@ -88,7 +90,7 @@ saveCarritoButton.addEventListener("click", () => { saveCarrito(); });
 loadCarritoButton.addEventListener("click", () => { loadCarrito(); });
 clearCarritoButton.addEventListener("click", () => { clearCarrito(); });
 showAmount.addEventListener("change", () => { amount = showAmount.value; filterProducts(); });
-
+subscribeButton.addEventListener("click", () => { saveEmail(); });
 
 /**
  * Crea el html para mostrar los productos en la pagina
@@ -452,4 +454,8 @@ function filterProducts() {
 
     loadProducts(filteredProducts);
 }
-
+ function saveEmail() {
+    let email = subscribeEmail.value;
+    email != '' && localStorage.setItem("user_email", email);
+    console.log(email)
+ }
