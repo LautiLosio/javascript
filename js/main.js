@@ -123,7 +123,7 @@ function loadProducts (array) {
             // Cargo el valor del selector con la cantidad de productos disponibles
             if (carrito.length > 0) {
                 let found = carrito.find(item => item.producto.id === array[i].id);
-                found ? selector.value = found.available : selector.value = 0;
+                found ? selector.value = found.cantidad : selector.value = 0;
             } else {
                 selector.value = 0;
             }
@@ -449,8 +449,6 @@ function filterProducts() {
     if (rating !== "") {
         filteredProducts = filteredProducts.filter(product => product.rating >= rating);
     }
-
-    console.log(filteredProducts);
 
     loadProducts(filteredProducts);
 }
