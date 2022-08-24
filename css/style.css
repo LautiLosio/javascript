@@ -275,6 +275,15 @@
     justify-content: flex-end;
     padding: 10px;
     gap: 10px;
+    font-size: 1rem;
+}
+
+#show-amount {
+    width: 100%;
+    padding: 5px;
+    border: none;
+    background-color: #e9edc9;
+    font-size: 1rem;
 }
 
 .product-grid {
