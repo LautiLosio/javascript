@@ -87,7 +87,7 @@ buyButton.addEventListener("click", () => { comprar(); });
 saveCarritoButton.addEventListener("click", () => { saveCarrito(); });
 loadCarritoButton.addEventListener("click", () => { loadCarrito(); });
 clearCarritoButton.addEventListener("click", () => { clearCarrito(); });
-showAmount.addEventListener("change", () => { amount = showAmount.value; loadProducts(productos); });
+showAmount.addEventListener("change", () => { amount = showAmount.value; filterProducts(); });
 
 
 /**
