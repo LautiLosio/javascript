@@ -192,8 +192,6 @@ function loadProducts (array) {
 
 /**
  * Realiza la compra de todos los productos del carrito
- * 
- * @returns no devuelve nada
  */
 function comprar() {
     // Si el carrito esta vacio, muestro un mensaje al usuario
@@ -365,11 +363,17 @@ function updateTotalButton() {
     
 }
 
+/**
+ * Agrega o quita la clase "hidden" del boton de total
+ */
 function toggleTotalButton() {
     totalButton.classList.toggle("hidden");
     updateTotalButton();
 }
 
+/**
+ * Actualiza la lista de productos que se muestra en la pantalla del carrito
+ */
 function updateCarrito() {
     // Actualizo el contenido del carrito
     let carritoBody = document.querySelector("#carrito-body");
@@ -392,6 +396,9 @@ function updateCarrito() {
     carrito.length === 0 && (carritoBody.innerHTML = `<p>No hay productos en el carrito</p>`);
 }
 
+/**
+ * Agrega o quita la clase "hidden" del carrito y el boton de total
+ */
 function toggleCarrito() {
     updateCarrito();
     toggleTotalButton();
@@ -400,10 +407,16 @@ function toggleCarrito() {
     !carritoContainer.classList.contains("hidden") ? body.style.overflow = "hidden" : body.style.overflow = "auto";
 }
 
+/**
+ * Guarda el carrito en localStorage
+ */
 function saveCarrito() {
     localStorage.setItem("carrito", JSON.stringify(carrito));
 }
 
+/**
+ * Busca el carrito en el localStorage y lo carga en el carrito
+ */
 function loadCarrito() {
     let savedCarrito = localStorage.getItem("carrito") || "[]";
     if (savedCarrito !== "[]") {
@@ -415,6 +428,9 @@ function loadCarrito() {
     filterProducts();
 }
 
+/**
+ * Borra el carrito y actualiza todas las interfaces relacionadas
+ */
 function clearCarrito() {
     carrito = [];
     updateCarrito();
@@ -422,6 +438,9 @@ function clearCarrito() {
     filterProducts();
 }
 
+/**
+ * Trae la lista de categorias de la API y las muestra en el menu de categorias
+ */
 async function getCategories() {
     let categories = await fetch("https://fakestoreapi.com/products/categories");
     categories = await categories.json();
