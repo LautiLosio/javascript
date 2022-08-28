@@ -419,7 +419,7 @@ function clearCarrito() {
     carrito = [];
     updateCarrito();
     updateTotalButton();
-    loadProducts(productos);
+    filterProducts();
 }
 
 async function getCategories() {
