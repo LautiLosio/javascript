@@ -48,11 +48,13 @@ async function fetchProducts() {
  * @returns {number} el precio del dolar de hoy
  */
 async function getDolarPrice() {
-    const response = await fetch('https://cors-solucion.herokuapp.com/https://api-dolar-argentina.herokuapp.com/api/dolarblue');
+    const response = await fetch('https://www.dolarsi.com/api/api.php?type=dolar');
     const data = await response.json();
 
-    let compra = parseFloat(data.compra);
-    let venta = parseFloat(data.venta);
+    let blue = data.find(item => item.casa.nombre === "Blue");
+    
+    let compra = parseFloat(blue.casa.compra);
+    let venta = parseFloat(blue.casa.venta);
 
     dolarHoy = (compra + venta) / 2;
 
