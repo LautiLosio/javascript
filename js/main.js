@@ -48,17 +48,9 @@ async function fetchProducts() {
  * @returns {number} el precio del dolar de hoy
  */
 async function getDolarPrice() {
-    const response = await fetch('https://www.dolarsi.com/api/api.php?type=dolar');
+    const response = await fetch('https://dolarapi.com/v1/dolares/blue');
     const data = await response.json();
-
-    let blue = data.find(item => item.casa.nombre === "Blue");
-    
-    let compra = parseFloat(blue.casa.compra);
-    let venta = parseFloat(blue.casa.venta);
-
-    dolarHoy = (compra + venta) / 2;
-
-    return dolarHoy;
+    return dolarHoy = (data.compra + data.venta) / 2;
 }
 
 fetchProducts();
@@ -113,12 +105,15 @@ function loadProducts (array) {
             let figcaption = document.createElement("figcaption");
             let price = document.createElement("h5");
             let stock = document.createElement("p");
+            let rating = document.createElement("p");
+            rating.classList.add("rating");
             let selector = document.createElement("input");
             let selectorContainer = document.createElement("div");
             selectorContainer.className = "selector-container";
             
             // Seteo los atributos de los elementos
             stock.innerHTML = `Stock: ${product.available}`;
+            rating.innerHTML = `${product.rating.toLocaleString('en-US', {minimumFractionDigits: 1})} &starf;`;
             selector.className = "selector";
             selector.type = "number";
             selector.min = "0";
@@ -164,7 +159,7 @@ function loadProducts (array) {
             img.src = product.image;
             product.available == 0 && figure.classList.add("out-of-stock");
 
-            price.innerHTML = `${product.price.toLocaleString('es-AR',{style: "currency", currency: "ARS"})} - ${product.rating.toLocaleString('en-US', {minimumFractionDigits: 1})} &starf;`;
+            price.innerHTML = `${product.price.toLocaleString('es-AR',{style: "currency", currency: "ARS"})}`;
             name.innerHTML = product.title;
 
             // creo el html para el selector
@@ -178,6 +173,7 @@ function loadProducts (array) {
             figure.appendChild(figcaption);
             figcaption.appendChild(price);
             figcaption.appendChild(stock);
+            figcaption.appendChild(rating);
             figcaption.appendChild(selectorContainer);
             
             // Agrega el html de producto completo al contenedor de la pagina
